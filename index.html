@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Walimatul Urus | Premium Invitation</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <style>
+        /* === BASE THEME & RESET === */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #f4f0ec; font-family: 'Georgia', serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .app-frame { width: 100%; max-width: 420px; height: 100dvh; background-color: #ffffff; position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.05); }
+
+        /* === ENVELOPE OVERLAY === */
+        .envelope { position: absolute; inset: 0; background-color: #FAF8F5; z-index: 50; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1); padding: 20px; }
+        .envelope.is-open { transform: translateY(-100%); }
+        .bismillah { font-size: 2rem; color: #D4AF37; margin-bottom: 20px; }
+        .couple-names { font-size: 2.5rem; font-style: italic; color: #333; margin-bottom: 10px; }
+        .event-date { font-size: 1rem; color: #666; letter-spacing: 2px; margin-bottom: 40px; }
+
+        /* === BUTTONS & UI === */
+        .btn-gold { background-color: #D4AF37; color: #fff; border: none; padding: 12px 30px; font-size: 1rem; border-radius: 30px; cursor: pointer; letter-spacing: 1px; transition: opacity 0.3s; width: 100%; }
+        .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-outline { background: transparent; border: 1px solid #D4AF37; color: #D4AF37; padding: 12px 30px; font-size: 1rem; border-radius: 30px; cursor: pointer; width: 100%; margin-bottom: 10px; }
+        .btn-text { background: transparent; border: none; color: #888; text-decoration: underline; cursor: pointer; font-size: 0.9rem; margin-top: 15px; width: 100%; }
+        
+        .btn-close-envelope { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.5); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; z-index: 10; cursor: pointer; }
+        .audio-toggle { position: absolute; top: 20px; left: 20px; width: 40px; height: 40px; background: #D4AF37; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; z-index: 10; cursor: pointer; }
+
+        /* === FORMS === */
+        .input-field { width: 100%; padding: 12px 15px; margin-bottom: 15px; border: 1px solid #eaeaea; border-radius: 10px; font-family: inherit; font-size: 0.95rem; background: #fafafa; outline: none; transition: border 0.3s; }
+        .input-field:focus { border-color: #D4AF37; }
+        .pax-group { display: flex; gap: 10px; }
+        .pax-group > div { flex: 1; }
+        .form-label { display: block; font-size: 0.8rem; color: #666; margin-bottom: 5px; text-align: left; }
+
+        /* === STORY CONTENT === */
+        .story-container { height: 100%; overflow-y: auto; padding-bottom: 120px; scroll-behavior: smooth; background-color: #FAF8F5; }
+        .story-section { padding: 60px 20px; text-align: center; position: relative; }
+        .story-section::after { content: '✧'; display: block; color: #D4AF37; font-size: 1.5rem; margin-top: 50px; opacity: 0.5; }
+        .story-section:last-child::after { display: none; }
+        
+        /* Typography for Story */
+        .story-title { font-size: 2.2rem; color: #D4AF37; font-style: italic; margin-bottom: 15px; font-weight: normal; }
+        .story-text { color: #555; line-height: 1.8; font-size: 0.95rem; margin-bottom: 15px; }
+        .parents-name { font-weight: bold; color: #333; font-size: 1.1rem; margin-top: 10px; }
+        .bride-groom-name { font-size: 2.8rem; color: #333; margin: 20px 0; font-style: italic; font-family: 'Georgia', serif; }
+        .ampersand { color: #D4AF37; font-size: 2rem; font-style: italic; }
+        
+        .aturcara-box { background: #fff; border: 1px solid #eaeaea; border-radius: 15px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .aturcara-item { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dashed #eaeaea; padding-bottom: 10px; }
+        .aturcara-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .aturcara-time { color: #D4AF37; font-weight: bold; }
+        .aturcara-event { color: #555; }
+
+        /* === BOTTOM NAV & SHEETS === */
+        .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background-color: #ffffff; border-top: 1px solid #eaeaea; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; z-index: 40; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; font-size: 0.7rem; cursor: pointer; width: 20%; transition: color 0.3s; }
+        .nav-item i { font-size: 1.5rem; margin-bottom: 4px; }
+        .nav-item.active { color: #D4AF37; }
+
+        .bottom-sheet { position: absolute; bottom: 70px; left: 0; width: 100%; height: 65%; background-color: #ffffff; border-radius: 24px 24px 0 0; box-shadow: 0 -10px 20px rgba(0,0,0,0.08); transform: translateY(120%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 30; padding: 25px 20px; overflow-y: auto; }
+        .bottom-sheet.is-active { transform: translateY(0); }
+        .sheet-header { text-align: center; font-size: 1.2rem; color: #333; margin-bottom: 25px; font-weight: bold; border-bottom: 1px solid #eaeaea; padding-bottom: 15px; }
+        
+        /* === SUCCESS STATE === */
+        .success-state { text-align: center; padding-top: 20px; }
+        .success-state i { font-size: 4rem; color: #4CAF50; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="app-frame" x-data="appData()">
+
+        <audio x-ref="bgMusic" loop>
+            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        </audio>
+
+        <div class="envelope" :class="envelopeOpened ? 'is-open' : ''">
+            <div class="bismillah">﷽</div>
+            <h1 class="couple-names">Ahmad & Fatimah</h1>
+            <p class="event-date">SABTU, 24 OGOS 2026</p>
+            <button class="btn-gold" style="width: auto;" @click="openKad()">BUKA KAD</button>
+        </div>
+
+        <div class="story-container" x-ref="storyScroll">
+            <button class="btn-close-envelope" @click="closeKad()">Tutup Kad</button>
+            <div class="audio-toggle" @click="toggleAudio()">
+                <i class="ph" :class="isPlaying ? 'ph-speaker-high' : 'ph-speaker-slash'"></i>
+            </div>
+
+            <div class="story-section" style="padding-top: 80px;">
+                <h2 style="font-size: 2.5rem; color: #D4AF37; margin-bottom: 20px;">﷽</h2>
+                <p class="story-text">Assalamualaikum Warahmatullahi Wabarakatuh</p>
+                <p class="story-text" style="font-size: 0.85rem;">Dengan penuh kesyukuran dan lipahan rahmat, kami</p>
+                
+                <p class="parents-name">Abu Bakar Bin Omar<br>&<br>Siti Aisyah Binti Ali</p>
+                
+                <p class="story-text" style="margin-top: 20px; font-size: 0.85rem;">menjemput Dato' / Datin / Tuan / Puan / Encik / Cik hadir ke majlis walimatul urus putera kami</p>
+            </div>
+
+            <div class="story-section">
+                <div class="bride-groom-name">Ahmad</div>
+                <div class="ampersand">dengan pasangannya</div>
+                <div class="bride-groom-name">Fatimah</div>
+            </div>
+
+            <div class="story-section">
+                <h2 class="story-title">Aturcara Majlis</h2>
+                <p class="story-text">Sabtu, 24 Ogos 2026<br>Bersamaan 10 Rabiulawal 1448H</p>
+                
+                <div class="aturcara-box">
+                    <div class="aturcara-item">
+                        <span class="aturcara-event">Ketibaan Tetamu</span>
+                        <span class="aturcara-time">11:00 Pagi</span>
+                    </div>
+                    <div class="aturcara-item">
+                        <span class="aturcara-event">Ketibaan Pengantin</span>
+                        <span class="aturcara-time">12:30 Tghari</span>
+                    </div>
+                    <div class="aturcara-item">
+                        <span class="aturcara-event">Makan Beradab</span>
+                        <span class="aturcara-time">1:00 Petang</span>
+                    </div>
+                    <div class="aturcara-item">
+                        <span class="aturcara-event">Sesi Bergambar</span>
+                        <span class="aturcara-time">2:30 Petang</span>
+                    </div>
+                    <div class="aturcara-item">
+                        <span class="aturcara-event">Majlis Bersurai</span>
+                        <span class="aturcara-time">4:00 Petang</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="story-section" style="padding-bottom: 40px;">
+                <h2 class="story-title">Doa Pengantin</h2>
+                <p class="story-text" style="font-style: italic;">
+                    "Ya Allah, satukanlah hati kedua mempelai ini seperti Engkau satukan hati Adam dan Hawa, Yusuf dan Zulaikha, dan seperti Engkau satukan hati Muhammad S.A.W dan Khadijah. Berkatilah majlis ini dan jadikanlah zuriat mereka zuriat yang soleh dan solehah. Amin Ya Rabbal Alamin."
+                </p>
+            </div>
+            
+        </div>
+        
+        <div class="bottom-sheet" :class="activeSheet === 'rsvp' ? 'is-active' : ''">
+            <div class="sheet-header">Pengesahan Hadir (RSVP)</div>
+            
+            <div x-show="submitSuccess" class="success-state" style="display: none;">
+                <i class="ph ph-check-circle"></i>
+                <h3 style="margin-bottom: 10px;">Terima Kasih!</h3>
+                <p style="color: #666; margin-bottom: 20px;">Maklum balas anda telah disimpan.</p>
+                <button class="btn-gold" @click="activeSheet = null">Tutup</button>
+            </div>
+
+            <div x-show="!submitSuccess">
+                
+                <div x-show="!rsvpStatus">
+                    <p style="text-align: center; color: #666; margin-bottom: 20px;">Sila sahkan kehadiran anda ke majlis kami.</p>
+                    <button type="button" class="btn-outline" @click="rsvpStatus = 'Hadir'">Hadir</button>
+                    <button type="button" class="btn-outline" @click="rsvpStatus = 'Tidak Hadir'">Tidak Hadir</button>
+                </div>
+
+                <form x-show="rsvpStatus" @submit.prevent="submitRSVP()" style="display: none;">
+                    <p style="text-align: center; margin-bottom: 15px; font-size: 0.9rem;">Status: <strong style="color:#D4AF37;" x-text="rsvpStatus"></strong></p>
+
+                    <input type="text" x-model="form.name" class="input-field" placeholder="Nama Penuh" required>
+                    <input type="tel" x-model="form.phone" class="input-field" placeholder="No. Telefon" required>
+
+                    <div x-show="rsvpStatus === 'Hadir'" class="pax-group">
+                        <div>
+                            <label class="form-label">Dewasa</label>
+                            <input type="number" x-model="form.adults" class="input-field" min="1" placeholder="0">
+                        </div>
+                        <div>
+                            <label class="form-label">Kanak-kanak</label>
+                            <input type="number" x-model="form.children" class="input-field" min="0" placeholder="0">
+                        </div>
+                    </div>
+
+                    <input type="text" x-model="form.message" class="input-field" placeholder="Ucapan (Pilihan)">
+
+                    <button type="submit" class="btn-gold" :disabled="isSubmitting">
+                        <span x-text="isSubmitting ? 'Menghantar...' : 'Hantar RSVP'"></span>
+                    </button>
+                    <button type="button" class="btn-text" @click="rsvpStatus = null">Kembali</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="bottom-sheet" :class="activeSheet === 'gift' ? 'is-active' : ''">
+            <div class="sheet-header">Salam Kaup</div>
+            <div style="text-align: center;">
+                <p style="color: #666; margin-bottom: 20px; font-size: 0.9rem;">Seikhlas hati, seumpama budi. Terima kasih atas ingatan dan doa anda.</p>
+                <div style="background: #fafafa; border: 1px solid #eaeaea; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                    <img src="https://via.placeholder.com/150?text=DuitNow+QR" alt="QR Code" style="width: 150px; height: 150px; margin-bottom: 15px; border-radius: 10px;">
+                    <h3 style="color: #333; margin-bottom: 5px;">Maybank</h3>
+                    <p style="font-size: 1.2rem; font-weight: bold; letter-spacing: 2px; margin-bottom: 5px;">1622 3344 5566</p>
+                    <p style="color: #888; font-size: 0.8rem; margin-bottom: 15px;">Ahmad Bin Abu Bakar</p>
+                    
+                    <button class="btn-outline" @click="navigator.clipboard.writeText('162233445566'); alert('Nombor akaun berjaya disalin!')">
+                        <i class="ph ph-copy" style="vertical-align: middle;"></i> Salin Nombor Akaun
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-sheet" :class="activeSheet === 'contact' ? 'is-active' : ''">
+            <div class="sheet-header">Hubungi Kami</div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #eaeaea; border-radius: 15px; margin-bottom: 15px;">
+                <div>
+                    <h4 style="color: #333;">Ahmad</h4>
+                    <p style="color: #888; font-size: 0.8rem;">Pengantin Lelaki</p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <a href="tel:+60123456789" style="background: #f4f0ec; color: #D4AF37; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-phone"></i></a>
+                    <a href="https://wa.me/60123456789" target="_blank" style="background: #25D366; color: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-whatsapp-logo"></i></a>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #eaeaea; border-radius: 15px;">
+                <div>
+                    <h4 style="color: #333;">Fatimah</h4>
+                    <p style="color: #888; font-size: 0.8rem;">Pengantin Perempuan</p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <a href="tel:+60198765432" style="background: #f4f0ec; color: #D4AF37; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-phone"></i></a>
+                    <a href="https://wa.me/60198765432" target="_blank" style="background: #25D366; color: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-whatsapp-logo"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-sheet" :class="activeSheet === 'location' ? 'is-active' : ''">
+            <div class="sheet-header">Lokasi Majlis</div>
+            <img src="https://via.placeholder.com/400x200?text=Peta+Lokasi" style="width: 100%; border-radius: 10px; margin-bottom: 15px;">
+            <h3 style="color: #333; margin-bottom: 5px; text-align: center;">Dewan Utama</h3>
+            <p style="color: #666; font-size: 0.9rem; text-align: center; margin-bottom: 20px;">No 1, Jalan Majlis, 50000 Kuala Lumpur</p>
+            
+            <a href="https://maps.google.com/?q=Kuala+Lumpur" target="_blank" class="btn-outline" style="display: block; text-align: center; text-decoration: none; margin-bottom: 10px;">
+                <i class="ph ph-google-logo" style="vertical-align: middle;"></i> Buka Google Maps
+            </a>
+            <a href="https://waze.com/ul?q=Kuala+Lumpur" target="_blank" class="btn-outline" style="display: block; text-align: center; text-decoration: none;">
+                <i class="ph ph-navigation-arrow" style="vertical-align: middle;"></i> Buka Waze
+            </a>
+        </div>
+
+        <div class="bottom-sheet" :class="activeSheet === 'calendar' ? 'is-active' : ''">
+            <div class="sheet-header">Simpan Tarikh</div>
+            <div style="text-align: center; margin-bottom: 30px; margin-top: 20px;">
+                <h1 style="color: #D4AF37; font-size: 5rem; line-height: 1;">24</h1>
+                <h3 style="color: #333; text-transform: uppercase; letter-spacing: 2px;">Ogos 2026</h3>
+                <p style="color: #888; margin-top: 5px;">Sabtu • 11:00 Pagi - 4:00 Petang</p>
+            </div>
+            
+            <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Walimatul+Urus+Ahmad+%26+Fatimah&dates=20260824T030000Z/20260824T080000Z&details=Sila+hadir+memeriahkan+majlis+kami.&location=Dewan+Utama,+Kuala+Lumpur" target="_blank" class="btn-gold" style="display: block; text-align: center; text-decoration: none; width: 100%;">
+                <i class="ph ph-calendar-plus" style="vertical-align: middle;"></i> Tambah ke Google Calendar
+            </a>
+        </div>
+        
+        <div class="bottom-nav">
+            <div class="nav-item" :class="activeSheet === 'rsvp' ? 'active' : ''" @click="toggleSheet('rsvp')">
+                <i class="ph ph-envelope-open"></i><span>RSVP</span>
+            </div>
+            <div class="nav-item" :class="activeSheet === 'gift' ? 'active' : ''" @click="toggleSheet('gift')">
+                <i class="ph ph-gift"></i><span>Hadiah</span>
+            </div>
+            <div class="nav-item" :class="activeSheet === 'contact' ? 'active' : ''" @click="toggleSheet('contact')">
+                <i class="ph ph-phone"></i><span>Hubungi</span>
+            </div>
+            <div class="nav-item" :class="activeSheet === 'location' ? 'active' : ''" @click="toggleSheet('location')">
+                <i class="ph ph-map-pin"></i><span>Lokasi</span>
+            </div>
+            <div class="nav-item" :class="activeSheet === 'calendar' ? 'active' : ''" @click="toggleSheet('calendar')">
+                <i class="ph ph-calendar-plus"></i><span>Kalendar</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function appData() {
+            return {
+                envelopeOpened: false,
+                activeSheet: null,
+                isPlaying: false,
+                
+                // RSVP State
+                rsvpStatus: null,
+                isSubmitting: false,
+                submitSuccess: false,
+                form: { name: '', phone: '', adults: '', children: '', message: '' },
+
+                openKad() { this.envelopeOpened = true; this.playAudio(); },
+                closeKad() { this.envelopeOpened = false; this.activeSheet = null; this.pauseAudio(); this.$refs.storyScroll.scrollTop = 0; },
+                toggleSheet(sheetName) { this.activeSheet = this.activeSheet === sheetName ? null : sheetName; },
+                toggleAudio() { this.isPlaying ? this.pauseAudio() : this.playAudio(); },
+                playAudio() { this.$refs.bgMusic.play(); this.isPlaying = true; },
+                pauseAudio() { this.$refs.bgMusic.pause(); this.isPlaying = false; },
+
+                // The AJAX Submission to Google Sheets
+                submitRSVP() {
+                    this.isSubmitting = true;
+                    
+                    // Bundle the data
+                    const payload = {
+                        name: this.form.name,
+                        phone: this.form.phone,
+                        attendance: this.rsvpStatus,
+                        adults: this.rsvpStatus === 'Hadir' ? this.form.adults : '0',
+                        children: this.rsvpStatus === 'Hadir' ? this.form.children : '0',
+                        message: this.form.message
+                    };
+
+                    // PASTE YOUR GOOGLE WEB APP URL HERE INSIDE THE QUOTES
+                    const googleUrl = 'https://script.google.com/macros/s/AKfycbzDZttIC0pf3bBlPvlCtAEwmVP9Kwnvu9-4scxF2CbDyIkeovxXsY-_GIytcruMBq5Pyg/exec';
+
+                    fetch(googleUrl, {
+                        method: 'POST',
+                        mode: 'no-cors', // Bypasses cross-origin blocks silently
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(() => {
+                        this.isSubmitting = false;
+                        this.submitSuccess = true;
+                        this.form = { name: '', phone: '', adults: '', children: '', message: '' }; // Reset form
+                    })
+                    .catch(error => {
+                        alert("Ralat semasa menghantar. Sila cuba lagi.");
+                        this.isSubmitting = false;
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>
