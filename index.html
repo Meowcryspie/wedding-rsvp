@@ -3,81 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Walimatul Urus | Premium Invitation</title>
+    <title>Walimatul Urus | Faizatul & Nurul</title>
+    
+    <meta property="og:title" content="Walimatul Urus | Faizatul & Nurul">
+    <meta property="og:description" content="Khas buat keluarga dan kenalan. Sila klik untuk menjawab RSVP dan melihat butiran majlis kami.">
+    <meta property="og:image" content="images/preview.jpg">
+    <meta property="og:type" content="website">
+
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+
     <style>
         /* === BASE THEME & RESET === */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        /* Lock the body perfectly to the viewport to fix mobile gaps */
-        body { background-color: #f4f0ec; font-family: 'Georgia', serif; position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; overflow: hidden; }
-        .app-frame { width: 100%; max-width: 420px; height: 100%; background-color: #ffffff; position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.05); }
+        body { background-color: #F4EAE6; font-family: 'Lora', serif; position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; overflow: hidden; }
+        .app-frame { width: 100%; max-width: 420px; height: 100%; background-color: #FAF8F5; position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.05); }
         
-        /* === ENVELOPE OVERLAY === */
-        .envelope { position: absolute; inset: 0; background-color: #FAF8F5; z-index: 50; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1); padding: 20px; }
-        .envelope.is-open { transform: translateY(-100%); }
-        .bismillah { font-size: 2rem; color: #D4AF37; margin-bottom: 20px; }
-        .couple-names { font-size: 2.5rem; font-style: italic; color: #333; margin-bottom: 10px; }
-        .event-date { font-size: 1rem; color: #666; letter-spacing: 2px; margin-bottom: 40px; }
+        /* ==========================================================================
+           1. CINEMATIC ENVELOPE CSS
+           ========================================================================== */
+        .intro-screen { position: absolute; inset: 0; z-index: 100; background-color: #F4EAE6; background-image: url('https://www.transparenttextures.com/patterns/arabesque.png'); display: flex; justify-content: center; align-items: center; transition: opacity 1s ease; }
+        .intro-screen.is-finished { opacity: 0; pointer-events: none; }
 
-        /* === BUTTONS & UI === */
-        .btn-gold { background-color: #D4AF37; color: #fff; border: none; padding: 12px 30px; font-size: 1rem; border-radius: 30px; cursor: pointer; letter-spacing: 1px; transition: opacity 0.3s; width: 100%; }
-        .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-outline { background: transparent; border: 1px solid #D4AF37; color: #D4AF37; padding: 12px 30px; font-size: 1rem; border-radius: 30px; cursor: pointer; width: 100%; margin-bottom: 10px; }
-        .btn-text { background: transparent; border: none; color: #888; text-decoration: underline; cursor: pointer; font-size: 0.9rem; margin-top: 15px; width: 100%; }
-        
-        .btn-close-envelope { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.5); color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; z-index: 10; cursor: pointer; }
-        
-        /* Audio moved to bottom-right, sits above story (z-index 25) but below sheet (z-index 30) */
-        .audio-toggle { position: absolute; bottom: 90px; right: 20px; width: 45px; height: 45px; background: #D4AF37; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; z-index: 25; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        @keyframes dropIn { 0% { transform: translateY(-100vh); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .drop-wrapper { animation: dropIn 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .float-wrapper { animation: float 3.5s ease-in-out infinite; animation-delay: 1.2s; perspective: 1000px; }
 
-        /* New: Dark overlay behind sheets */
-        .sheet-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 28; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-        .sheet-backdrop.is-active { opacity: 1; pointer-events: auto; }
+        .envelope-wrapper { position: relative; width: 340px; height: 220px; }
+        .env-back { position: absolute; inset: 0; background: #DDAF9F; border-radius: 5px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); z-index: 1; }
+        .env-front-group { position: absolute; inset: 0; z-index: 4; transform-style: preserve-3d; pointer-events: none; }
+        .env-front { position: absolute; inset: 0; z-index: 4; border-radius: 5px; overflow: hidden; }
+        .env-front::before { content: ''; position: absolute; bottom: 0; left: 0; border-left: 170px solid transparent; border-right: 170px solid transparent; border-bottom: 120px solid #F1D3C8; z-index: 4; filter: drop-shadow(0 -4px 5px rgba(0,0,0,0.05)); }
+        .env-front::after { content: ''; position: absolute; top: 0; left: 0; border-top: 110px solid transparent; border-left: 170px solid #E8C9BD; border-bottom: 110px solid transparent; z-index: 3; }
+        .env-right { position: absolute; top: 0; right: 0; border-top: 110px solid transparent; border-right: 170px solid #E8C9BD; border-bottom: 110px solid transparent; z-index: 3; }
+        .env-top { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 170px solid transparent; border-right: 170px solid transparent; border-top: 125px solid #F6DACF; transform-origin: top; z-index: 5; filter: drop-shadow(0 5px 6px rgba(0,0,0,0.1)); }
+
+        .env-seal { position: absolute; top: 125px; left: 50%; transform: translate(-50%, -50%); width: 75px; height: 75px; background: #FFFFFF; border-radius: 50%; z-index: 6; display: flex; align-items: center; justify-content: center; color: #DDAF9F; font-family: 'Great Vibes', cursive; font-size: 2.2rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 2px solid #F4EAE6; transition: box-shadow 0.2s; pointer-events: auto; }
+        .env-seal:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.2); transform: translate(-50%, -50%) scale(1.05); }
+
+        /* Opening Animations */
+        .is-opening .env-seal { animation: popSeal 4.5s forwards; }
+        @keyframes popSeal { 0% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 5%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); pointer-events: none; } }
+        .is-opening .env-top { animation: topFlapAnim 4.5s forwards; }
+        @keyframes topFlapAnim { 0%, 5% { transform: rotateX(0deg) translateX(0); z-index: 5; opacity: 1; } 10% { transform: rotateX(179.9deg) translateX(0); z-index: 5; opacity: 1; } 11% { transform: rotateX(179.9deg) translateX(0); z-index: 2; opacity: 1; } 30% { transform: rotateX(179.9deg) translateX(0); z-index: 2; opacity: 1; } 45%, 100% { transform: rotateX(179.9deg) translateX(-100vw); z-index: 2; opacity: 0; } }
+        .is-opening .env-back, .is-opening .env-front-group { animation: shellExit 4.5s ease forwards; }
+        @keyframes shellExit { 0%, 30% { transform: translateX(0); opacity: 1; } 45%, 100% { transform: translateX(-100vw); opacity: 0; } }
+
+        /* The Letter Animation */
+        .env-letter { position: absolute; bottom: 10px; left: 20px; width: 300px; height: 200px; background: #FAF8F5; border-radius: 5px; z-index: 3; transform-style: preserve-3d; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(0,0,0,0.15); }
+        .is-opening .env-letter { animation: letterSlideZoom 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes letterSlideZoom { 0%, 15% { transform: translateY(0) scale(1); filter: blur(0px); opacity: 1; } 30%, 40% { transform: translateY(-230px) scale(0.9); filter: blur(0px); opacity: 1; } 55%, 75% { transform: translateY(-30px) scale(1); filter: blur(0px); opacity: 1; } 100% { transform: translateY(50px) scale(4); filter: blur(6px); opacity: 0; } }
         
-        /* New: The 'X' Close Button inside sheets */
-        .btn-close-sheet { position: absolute; top: 20px; right: 20px; background: #f4f0ec; border: none; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #555; cursor: pointer; font-size: 1.2rem; transition: background 0.2s; }
-        .btn-close-sheet:active { background: #e0dcd8; }
-        /* === FORMS === */
+        .letter-top { position: absolute; bottom: 100%; left: 0; width: 300px; height: 100px; background: #FAF8F5; transform-origin: bottom; transform: rotateX(179.9deg); backface-visibility: hidden; border-radius: 5px 5px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 1px dashed rgba(0,0,0,0.08); }
+        .is-opening .letter-top { animation: unfoldTop 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes unfoldTop { 0%, 55% { transform: rotateX(179.9deg); box-shadow: 0 0 0 rgba(0,0,0,0); } 70%, 100% { transform: rotateX(0deg); box-shadow: 0 -5px 15px rgba(0,0,0,0.05); } }
+        
+        .letter-bottom { position: absolute; top: 100%; left: 0; width: 300px; height: 200px; background: #FAF8F5; transform-origin: top; transform: rotateX(-179.9deg); backface-visibility: hidden; border-radius: 0 0 5px 5px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-top: 1px dashed rgba(0,0,0,0.08); }
+        .is-opening .letter-bottom { animation: unfoldBottom 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes unfoldBottom { 0%, 55% { transform: rotateX(-179.9deg); box-shadow: 0 0 0 rgba(0,0,0,0); } 70%, 100% { transform: rotateX(0deg); box-shadow: 0 5px 15px rgba(0,0,0,0.05); } }
+
+        /* Closing Reverse Animations */
+        .is-closing .env-seal { animation: reverseSeal 3s forwards; }
+        @keyframes reverseSeal { 0%, 85% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); pointer-events: none; } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; } }
+        .is-closing .env-top { animation: reverseTopFlap 3s forwards; }
+        @keyframes reverseTopFlap { 0%, 45% { transform: rotateX(179.9deg) translateX(-100vw); z-index: 2; opacity: 0; } 60%, 80% { transform: rotateX(179.9deg) translateX(0); z-index: 2; opacity: 1; } 81% { transform: rotateX(179.9deg) translateX(0); z-index: 5; opacity: 1; } 100% { transform: rotateX(0deg) translateX(0); z-index: 5; opacity: 1; } }
+        .is-closing .env-back, .is-closing .env-front-group { animation: reverseShellExit 3s ease forwards; }
+        @keyframes reverseShellExit { 0%, 45% { transform: translateX(-100vw); opacity: 0; } 60%, 100% { transform: translateX(0); opacity: 1; } }
+        .is-closing .env-letter { animation: reverseLetterSlideZoom 3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes reverseLetterSlideZoom { 0% { transform: translateY(50px) scale(4); filter: blur(6px); opacity: 0; } 15% { transform: translateY(-30px) scale(1); filter: blur(0px); opacity: 1; } 30% { transform: translateY(-30px) scale(1); } 45%, 60% { transform: translateY(-230px) scale(0.9); } 80%, 100% { transform: translateY(0) scale(1); } }
+        .is-closing .letter-top { animation: reverseUnfoldTop 3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes reverseUnfoldTop { 0%, 15% { transform: rotateX(0deg); box-shadow: 0 -5px 15px rgba(0,0,0,0.05); } 30%, 100% { transform: rotateX(179.9deg); box-shadow: 0 0 0 rgba(0,0,0,0); } }
+        .is-closing .letter-bottom { animation: reverseUnfoldBottom 3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes reverseUnfoldBottom { 0%, 15% { transform: rotateX(0deg); box-shadow: 0 5px 15px rgba(0,0,0,0.05); } 30%, 100% { transform: rotateX(-179.9deg); box-shadow: 0 0 0 rgba(0,0,0,0); } }
+
+        /* Dummy Text inside Envelope */
+        .dummy-text-gold { color: #D4AF37; font-size: 1.5rem; font-family: 'Amiri', serif; margin-bottom: 10px; }
+        .dummy-text-name { font-family: 'Great Vibes', cursive; font-size: 2.8rem; color: #4A3B32; line-height: 1; margin: 5px 0; }
+        .dummy-text-amp { color: #D4AF37; font-size: 2rem; font-style: italic; font-family: 'Playfair Display', serif; }
+        .blur-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .blur-line { background: #e0d5c1; border-radius: 2px; opacity: 0.7; filter: blur(0.8px); }
+
+        /* ==========================================================================
+           2. MAIN STORY UI CSS
+           ========================================================================== */
+        
+        .story-container { height: 100%; padding-bottom: 120px; background-color: #FAF8F5; scroll-behavior: smooth; overflow-y: auto; position: relative; z-index: 40; opacity: 0; transform: scale(0.95); transition: opacity 1s ease, transform 1s ease; pointer-events: none; }
+        .story-container.is-revealed { opacity: 1; transform: scale(1); pointer-events: auto; }
+        
+        .story-section { padding: 40px 20px; text-align: center; position: relative; }
+        .story-title { font-size: 2.2rem; color: #8B5A2B; font-family: 'Playfair Display', serif; font-style: italic; margin-bottom: 15px; font-weight: 600; }
+        .story-text { color: #555; line-height: 1.8; font-size: 0.95rem; margin-bottom: 15px; }
+        .bride-groom-name { font-size: 3.5rem; color: #4A3B32; margin: 5px 0; font-family: 'Great Vibes', cursive; text-shadow: 1px 1px 2px rgba(0,0,0,0.05); line-height: 1.2; }
+        .hashtag { color: #D4AF37; font-weight: bold; margin-top: 5px; font-size: 1.1rem; letter-spacing: 1px; }
+
+        /* Divider & Floral Box Styles */
+        .divider { margin: 35px 0 15px; color: #D4AF37; font-size: 1.2rem; letter-spacing: 5px; text-align: center; }
+        .doa-box { background-color: #fff; border: 2px solid #E8C9BD; border-radius: 20px; padding: 40px 25px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        .doa-box::before { content: '❁'; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); background: #FAF8F5; padding: 0 15px; color: #DDAF9F; font-size: 2rem; line-height: 1; }
+        .doa-box::after { content: '❁'; position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); background: #FAF8F5; padding: 0 15px; color: #DDAF9F; font-size: 2rem; line-height: 1; }
+
+        /* Buttons & Forms */
+        .btn-gold { background-color: #D4AF37; color: #fff; border: none; padding: 12px 30px; font-size: 1rem; border-radius: 30px; cursor: pointer; letter-spacing: 1px; transition: opacity 0.3s; width: 100%; font-family: 'Lora', serif; }
+        .btn-outline { background: transparent; border: 1px solid #D4AF37; color: #D4AF37; padding: 12px 30px; font-size: 1rem; border-radius: 30px; cursor: pointer; width: 100%; margin-bottom: 10px; font-family: 'Lora', serif; }
+        .btn-text { background: transparent; border: none; color: #888; text-decoration: underline; cursor: pointer; font-size: 0.9rem; margin-top: 15px; width: 100%; font-family: 'Lora', serif; }
+        
         .input-field { width: 100%; padding: 12px 15px; margin-bottom: 15px; border: 1px solid #eaeaea; border-radius: 10px; font-family: inherit; font-size: 0.95rem; background: #fafafa; outline: none; transition: border 0.3s; }
-        .input-field:focus { border-color: #D4AF37; }
         .pax-group { display: flex; gap: 10px; }
         .pax-group > div { flex: 1; }
         .form-label { display: block; font-size: 0.8rem; color: #666; margin-bottom: 5px; text-align: left; }
 
-        /* === STORY CONTENT === */
-        .story-container { height: 100%; overflow-y: auto; padding-bottom: 120px; scroll-behavior: smooth; background-color: #FAF8F5; }
-        .story-section { padding: 60px 20px; text-align: center; position: relative; }
-        .story-section::after { content: '✧'; display: block; color: #D4AF37; font-size: 1.5rem; margin-top: 50px; opacity: 0.5; }
-        .story-section:last-child::after { display: none; }
-        
-        /* Typography for Story */
-        .story-title { font-size: 2.2rem; color: #D4AF37; font-style: italic; margin-bottom: 15px; font-weight: normal; }
-        .story-text { color: #555; line-height: 1.8; font-size: 0.95rem; margin-bottom: 15px; }
-        .parents-name { font-weight: bold; color: #333; font-size: 1.1rem; margin-top: 10px; }
-        .bride-groom-name { font-size: 2.8rem; color: #333; margin: 20px 0; font-style: italic; font-family: 'Georgia', serif; }
-        .ampersand { color: #D4AF37; font-size: 2rem; font-style: italic; }
-        
+        /* Countdown & Scratch */
+        .countdown-wrapper { display: flex; justify-content: center; gap: 12px; margin-top: 20px; }
+        .cd-box { border: 1px solid #8B5A2B; border-radius: 8px; width: 60px; height: 60px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #fff; }
+        .cd-num { font-size: 1.4rem; color: #4A3B32; font-family: 'Playfair Display', serif; }
+        .cd-label { font-size: 0.6rem; color: #8B5A2B; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+        .scratch-wrapper { position: relative; width: 300px; height: 150px; margin: 15px auto 0; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); overflow: hidden; background: #fff; }
+        .scratch-reveal-content { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1; }
+        .scratch-reveal-content h3 { color: #8B5A2B; font-size: 1.8rem; font-family: 'Playfair Display', serif; margin-bottom: 5px; }
+        #scratchCanvas { position: absolute; inset: 0; z-index: 2; cursor: pointer; }
+        .scroll-hint { font-size: 0.8rem; color: #888; animation: bounce 2s infinite; margin-top: 20px; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         .aturcara-box { background: #fff; border: 1px solid #eaeaea; border-radius: 15px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-        .aturcara-item { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dashed #eaeaea; padding-bottom: 10px; }
+        .aturcara-item { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px dashed #eaeaea; padding-bottom: 15px; text-align: left; }
         .aturcara-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .aturcara-time { color: #D4AF37; font-weight: bold; }
+        .aturcara-time { color: #D4AF37; font-weight: bold; min-width: 85px; text-align: right; }
         .aturcara-event { color: #555; }
 
-        /* === BOTTOM NAV & SHEETS === */
-        .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background-color: #ffffff; border-top: 1px solid #eaeaea; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; z-index: 40; }
+        /* ==========================================================================
+           3. FLOATING UI ELEMENTS (Audio, Close Button, Nav Bar)
+           ========================================================================== */
+        
+        .audio-toggle { position: absolute; bottom: 90px; right: 20px; width: 45px; height: 45px; background: #D4AF37; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; z-index: 45; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: opacity 0.5s ease; opacity: 0; pointer-events: none; }
+        .audio-toggle.is-visible { opacity: 1; pointer-events: auto; }
+
+        .floating-close-btn { position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.9); color: #8B5A2B; border: 1px solid #eaeaea; padding: 8px 15px; border-radius: 20px; font-family: 'Lora', serif; font-size: 0.85rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 45; transition: opacity 0.5s ease; opacity: 0; pointer-events: none; display: flex; align-items: center; gap: 5px; backdrop-filter: blur(5px); }
+        .floating-close-btn.is-visible { opacity: 1; pointer-events: auto; }
+
+        .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background-color: #ffffff; border-top: 1px solid #eaeaea; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; z-index: 75; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bottom-nav.is-visible { transform: translateY(0); } 
+        
         .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; font-size: 0.7rem; cursor: pointer; width: 20%; transition: color 0.3s; }
         .nav-item i { font-size: 1.5rem; margin-bottom: 4px; }
         .nav-item.active { color: #D4AF37; }
 
-        .bottom-sheet { position: absolute; bottom: 70px; left: 0; width: 100%; height: 65%; background-color: #ffffff; border-radius: 24px 24px 0 0; box-shadow: 0 -10px 20px rgba(0,0,0,0.08); transform: translateY(120%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 30; padding: 25px 20px; overflow-y: auto; }
-        .bottom-sheet.is-active { transform: translateY(0); }
-        .sheet-header { text-align: center; font-size: 1.2rem; color: #333; margin-bottom: 25px; font-weight: bold; border-bottom: 1px solid #eaeaea; padding-bottom: 15px; }
+        /* Bottom Sheets */
+        .sheet-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 65; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .sheet-backdrop.is-active { opacity: 1; pointer-events: auto; }
         
-        /* === SUCCESS STATE === */
+        .bottom-sheet { position: absolute; bottom: 70px; left: 0; width: 100%; height: 65%; background-color: #ffffff; border-radius: 24px 24px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); transform: translateY(120%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); z-index: 70; padding: 25px 20px; overflow-y: auto; }
+        .bottom-sheet.is-active { transform: translateY(0); }
+        .sheet-header { text-align: center; font-size: 1.2rem; color: #333; font-family: 'Playfair Display', serif; margin-bottom: 25px; font-weight: bold; border-bottom: 1px solid #eaeaea; padding-bottom: 15px; }
+        .btn-close-sheet { position: absolute; top: 20px; right: 20px; background: #f4f0ec; border: none; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #555; cursor: pointer; font-size: 1.2rem; transition: background 0.2s; }
         .success-state { text-align: center; padding-top: 20px; }
         .success-state i { font-size: 4rem; color: #4CAF50; margin-bottom: 15px; }
+
+        /* Visual Calendar Styles */
+        .mini-calendar { background: #fafafa; border: 1px solid #eaeaea; border-radius: 15px; padding: 20px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+        .cal-header { font-family: 'Playfair Display', serif; font-weight: bold; color: #4A3B32; margin-bottom: 15px; font-size: 1.2rem; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; font-size: 0.85rem; }
+        .cal-day { color: #888; font-weight: bold; font-size: 0.75rem; border-bottom: 1px solid #eaeaea; padding-bottom: 5px; }
+        .cal-date { color: #555; padding: 6px 0; border-radius: 50%; transition: all 0.3s; }
+        .cal-date.active { background: #D4AF37; color: white; font-weight: bold; box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4); transform: scale(1.1); }
     </style>
 </head>
 <body>
@@ -85,58 +180,192 @@
     <div class="app-frame" x-data="appData()">
 
         <audio x-ref="bgMusic" loop>
-            <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+            <source src="musics\Beautiful In White.mp3" type="audio/mpeg">
+        </audio>
+        <audio x-ref="cheerSound">
+            <source src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3" type="audio/mpeg">
         </audio>
 
-        <div class="envelope" :class="envelopeOpened ? 'is-open' : ''">
-            <div class="bismillah">﷽</div>
-            <h1 class="couple-names">Ahmad & Fatimah</h1>
-            <p class="event-date">SABTU, 24 OGOS 2026</p>
-            <button class="btn-gold" style="width: auto;" @click="openKad()">BUKA KAD</button>
+        <div class="intro-screen" :class="introFinished ? 'is-finished' : ''">
+            <div class="drop-wrapper">
+                <div class="float-wrapper">
+                    
+                    <div class="envelope-wrapper" :class="{ 'is-opening': animState === 'opening', 'is-closing': animState === 'closing' }">
+                        <div class="env-back"></div>
+                        <div class="env-letter">
+                            <div class="letter-top"><div class="dummy-text-gold">﷽</div></div>
+                            <div class="dummy-text-name">Faizatul</div>
+                            <div class="dummy-text-amp">&</div>
+                            <div class="dummy-text-name">Nurul</div>
+                            <div class="letter-bottom">
+                                <div class="blur-wrapper">
+                                    <div class="blur-line" style="width: 80%; height: 8px; margin-bottom: 15px;"></div>
+                                    <div class="blur-line" style="width: 90%; height: 8px; margin-bottom: 15px;"></div>
+                                    <div class="blur-line" style="width: 75%; height: 8px; margin-bottom: 15px;"></div>
+                                    <div class="blur-line" style="width: 50%; height: 8px; margin-bottom: 25px;"></div>
+                                    <div class="blur-line" style="width: 30%; height: 6px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="env-front-group">
+                            <div class="env-front"></div>
+                            <div class="env-right"></div>
+                        </div>
+                        <div class="env-top"></div>
+                        <div class="env-seal" @click="openKad()">N&F</div>
+                    </div>
+
+                </div>
+            </div>
         </div>
 
-        <div class="audio-toggle" @click="toggleAudio()" x-show="envelopeOpened">
-            <i class="ph" :class="isPlaying ? 'ph-speaker-high' : 'ph-speaker-slash'"></i>
-        </div>
-
-        <div class="story-container" x-ref="storyScroll">
-            <button class="btn-close-envelope" @click="closeKad()">Tutup Kad</button>
-
-            <div class="story-section" style="padding-top: 80px;">
-                <h2 style="font-size: 2.5rem; color: #D4AF37; margin-bottom: 20px;">﷽</h2>
-                <p class="story-text">Assalamualaikum Warahmatullahi Wabarakatuh</p>
-                <p class="story-text" style="font-size: 0.85rem;">Dengan penuh kesyukuran dan lipahan rahmat, kami</p>
+        <div class="story-container" :class="introFinished ? 'is-revealed' : ''" x-ref="storyScroll">
+            
+            <div class="story-section" style="min-height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <p style="color: #D4AF37; font-size: 1.8rem; margin-bottom: 15px; font-family: 'Amiri', 'Playfair Display', serif;">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</p>
                 
-                <p class="parents-name">Abu Bakar Bin Omar<br>&<br>Siti Aisyah Binti Ali</p>
-                
-                <p class="story-text" style="margin-top: 20px; font-size: 0.85rem;">menjemput Dato' / Datin / Tuan / Puan / Encik / Cik hadir ke majlis walimatul urus putera kami</p>
-            </div>
+                <p class="story-text" style="font-size: 0.85rem; font-style: italic; padding: 0 15px;">
+                    "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu bersenang hati dan hidup mesra dengannya..."<br>
+                    <span style="font-size: 0.75rem;">(Surah Ar-Rum 30:21)</span>
+                </p>
 
-            <div class="story-section">
-                <div class="bride-groom-name">Ahmad</div>
-                <div class="ampersand">dengan pasangannya</div>
-                <div class="bride-groom-name">Fatimah</div>
-            </div>
-
-            <div class="story-section">
-                <h2 class="story-title">Aturcara Majlis</h2>
-                <p class="story-text">Sabtu, 24 Ogos 2026<br>Bersamaan 10 Rabiulawal 1448H</p>
+                <p class="story-text" style="margin-top: 25px; margin-bottom: 15px;">Dengan Izin Allah, kami,</p>
                 
-                <div class="aturcara-box">
-                    <div class="aturcara-item"><span class="aturcara-event">Ketibaan Tetamu</span><span class="aturcara-time">11:00 Pagi</span></div>
-                    <div class="aturcara-item"><span class="aturcara-event">Ketibaan Pengantin</span><span class="aturcara-time">12:30 Tghari</span></div>
-                    <div class="aturcara-item"><span class="aturcara-event">Makan Beradab</span><span class="aturcara-time">1:00 Petang</span></div>
-                    <div class="aturcara-item"><span class="aturcara-event">Sesi Bergambar</span><span class="aturcara-time">2:30 Petang</span></div>
-                    <div class="aturcara-item"><span class="aturcara-event">Majlis Bersurai</span><span class="aturcara-time">4:00 Petang</span></div>
+                <div class="bride-groom-name">Faizatul Fitri</div>
+                <div style="color: #D4AF37; font-size: 2rem; font-style: italic; font-family: 'Playfair Display', serif; margin: -5px 0;">&</div>
+                <div class="bride-groom-name">Nurul Batrisyia</div>
+                
+                <p class="story-text" style="font-size: 0.85rem; margin-top: 20px; padding: 0 20px; line-height: 1.6;">
+                    dengan hormatnya menjemput anda untuk meraikan bersama kami hari yang paling istimewa dalam hidup kami.
+                </p>
+
+                <div class="divider" style="margin-top: 25px; margin-bottom: 10px;">✦ ✧ ✦</div>
+
+                <div x-show="!isScratched" class="scroll-hint">
+                    Sila scroll ke bawah <i class="ph ph-caret-down"></i>
                 </div>
             </div>
 
-            <div class="story-section" style="padding-bottom: 40px;">
-                <h2 class="story-title">Doa Pengantin</h2>
-                <p class="story-text" style="font-style: italic;">
-                    "Ya Allah, satukanlah hati kedua mempelai ini seperti Engkau satukan hati Adam dan Hawa, Yusuf dan Zulaikha. Berkatilah majlis ini dan jadikanlah zuriat mereka zuriat yang soleh dan solehah. Amin."
-                </p>
+            <div class="story-section" style="padding-top: 20px; display: flex; flex-direction: column; justify-content: center;">
+                <h2 class="story-title" style="font-size: 3rem; margin-bottom: 5px;">Reveal</h2>
+                <div x-show="!isScratched" style="color: #8B5A2B; font-weight: bold; font-size: 0.9rem;">
+                    Sapu kotak di bawah untuk melihat tarikh! <i class="ph ph-hand-swipe-down"></i>
+                </div>
+
+                <div class="scratch-wrapper">
+                    <div class="scratch-reveal-content">
+                        <h3>26 Jun 2026</h3>
+                        <p style="color: #555; font-size: 0.9rem;">Jumaat (Selepas Asar)</p>
+                        <p style="font-size: 0.7rem; color: #888; margin-top: 5px;">Waktu mustajab doa</p>
+                    </div>
+                    <canvas id="scratchCanvas"></canvas>
+                </div>
+                
+                <div x-show="isScratched" style="display: none; margin-top: 20px; animation: fadeIn 1s ease-in;">
+                    <p style="font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: #4A3B32;">We're getting married!</p>
+                    <div class="hashtag">#FAInallywithNurul</div>
+                    <div class="scroll-hint">Scroll ke bawah <i class="ph ph-caret-down"></i></div>
+                </div>
             </div>
+
+            <div x-show="isScratched" style="display: none;" x-transition.opacity.duration.1000ms>
+                
+                <div class="story-section" x-data="countdownTimer()" x-init="start()">
+                    <h2 class="story-title">Menanti Hari</h2>
+                    <div class="countdown-wrapper">
+                        <div class="cd-box"><span class="cd-num" x-text="days">00</span><span class="cd-label">Hari</span></div>
+                        <div class="cd-box"><span class="cd-num" x-text="hours">00</span><span class="cd-label">Jam</span></div>
+                        <div class="cd-box"><span class="cd-num" x-text="minutes">00</span><span class="cd-label">Minit</span></div>
+                        <div class="cd-box"><span class="cd-num" x-text="seconds">00</span><span class="cd-label">Saat</span></div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: #8B5A2B; margin-top: 15px; font-style: italic;">menjelang hari bahagia</p>
+                    <div class="divider">✦ ✧ ✦</div>
+                </div>
+
+                <div class="story-section">
+                    <p style="font-size: 0.85rem; letter-spacing: 1px; color: #888; text-transform: uppercase;">Majlis akan berlangsung di</p>
+                    <img src="images/masjid.png" style="width: 100%; max-width: 350px; margin: 20px auto;" alt="Lukisan Masjid Al-Abyad">
+                    <h2 class="story-title" style="margin-top: 10px; font-size: 2.5rem;">Masjid Al-Abyad</h2>
+                    <p class="story-text" style="font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px;">Taman Matang Jaya, Kuching</p>
+                    <p class="story-text" style="font-size: 0.9rem; font-weight: bold; color: #D4AF37;">26 Jun 2026</p>
+                    <div class="divider">✦ ✧ ✦</div>
+                </div>
+                
+                <div class="story-section">
+                    <h2 class="story-title">Aturcara Majlis</h2>
+                    <p style="font-size: 0.85rem; color: #888; margin-bottom: 15px; font-style: italic;">Sila datang menepati waktu.</p>
+                    <div class="aturcara-box">
+                        <div class="aturcara-item">
+                            <span class="aturcara-event">Ketibaan Tetamu & Ahli Keluarga</span>
+                            <span class="aturcara-time">4:00 Petang</span>
+                        </div>
+                        <div class="aturcara-item">
+                            <span class="aturcara-event">Majlis Akad Nikah Berlangsung</span>
+                            <span class="aturcara-time">4:30 Petang</span>
+                        </div>
+                        <div class="aturcara-item">
+                            <span class="aturcara-event">Sesi Bergambar & Jamuan Makan</span>
+                            <span class="aturcara-time">6:00 Petang</span>
+                        </div>
+                        <div class="aturcara-item">
+                            <span class="aturcara-event">Majlis Bersurai</span>
+                            <span class="aturcara-time">7:00 Malam</span>
+                        </div>
+                    </div>
+                    <div class="divider">✦ ✧ ✦</div>
+                </div>
+
+                <div class="story-section">
+                    <h2 class="story-title">Tema Pakaian</h2>
+                    <img src="images/dresscode.png" style="width: 100%; max-width: 250px; margin: 10px auto 20px;" alt="Tema Pakaian Pastel">
+                    <p class="story-text" style="font-size: 0.9rem; line-height: 1.6;">Kami menjemput anda untuk berpakaian elegan dan formal untuk meraikan hari istimewa ini bersama kami.</p>
+                    
+                    <p style="font-size: 1.5rem; color: #8B5A2B; font-family: 'Playfair Display', serif; margin: 20px 0 5px;">Pakaian Bersesuaian</p>
+                    <p style="font-size: 1.1rem; color: #4A3B32; font-family: 'Lora', serif; font-style: italic;">Sila elakkan memakai warna putih</p>
+                    <p style="font-size: 0.9rem; color: #888; margin-top: 5px;">Warna pastel digalakkan (Kecuali Pink & Hijau)</p>
+                    <div class="divider">✦ ✧ ✦</div>
+                </div>
+
+                <div class="story-section" x-init="fetchMessages()">
+                    <h2 class="story-title" style="margin-bottom: 5px;">Ucapan Tetamu</h2>
+                    <p style="font-size: 0.85rem; color: #888; margin-bottom: 20px;">Doa dan titipan kata dari anda</p>
+                    
+                    <div x-show="isLoadingMessages" style="color: #D4AF37; font-size: 0.9rem; margin: 20px 0;">
+                        <i class="ph ph-spinner ph-spin" style="font-size: 1.5rem; vertical-align: middle;"></i> Memuat turun ucapan...
+                    </div>
+
+                    <div x-show="!isLoadingMessages" style="max-height: 300px; overflow-y: auto; text-align: left; padding: 10px; border-radius: 10px; background: #fff; border: 1px solid #eaeaea; display: none; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);">
+                        <div x-show="messages.length === 0" style="text-align: center; color: #888; font-size: 0.9rem; padding: 20px 0;">
+                            Belum ada ucapan. Jadilah yang pertama!
+                        </div>
+                        <template x-for="msg in messages">
+                            <div style="background: #fafafa; padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #f0f0f0;">
+                                <p style="font-weight: bold; color: #4A3B32; font-size: 0.9rem; margin-bottom: 5px; font-family: 'Playfair Display', serif;" x-text="msg.name"></p>
+                                <p style="color: #666; font-size: 0.85rem; line-height: 1.5;" x-text="msg.message"></p>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="divider">✦ ✧ ✦</div>
+                </div>
+
+                <div class="story-section" style="padding-bottom: 60px;">
+                    <h2 class="story-title" style="margin-bottom: 25px;">Doa Pengantin</h2>
+                    <div class="doa-box">
+                        <p class="story-text" style="font-style: italic; line-height: 1.8; margin: 0; color: #666;">
+                            "Ya Allah, satukanlah hati kedua mempelai ini... Berkatilah majlis ini dan jadikanlah zuriat mereka zuriat yang soleh dan solehah. Amin."
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <button class="floating-close-btn" :class="introFinished ? 'is-visible' : ''" @click="closeKad()">
+            <i class="ph ph-x"></i> Tutup
+        </button>
+
+        <div class="audio-toggle" :class="introFinished ? 'is-visible' : ''" @click="toggleAudio()">
+            <i class="ph" :class="isPlaying ? 'ph-speaker-high' : 'ph-speaker-slash'"></i>
         </div>
 
         <div class="sheet-backdrop" :class="activeSheet !== null ? 'is-active' : ''" @click="activeSheet = null"></div>
@@ -147,13 +376,12 @@
             
             <div x-show="submitSuccess" class="success-state" style="display: none;">
                 <i class="ph ph-check-circle"></i>
-                <h3 style="margin-bottom: 10px;">Terima Kasih!</h3>
+                <h3 style="margin-bottom: 10px; font-family: 'Playfair Display', serif;">Terima Kasih!</h3>
                 <p style="color: #666; margin-bottom: 20px;">Maklum balas anda telah disimpan.</p>
                 <button class="btn-gold" @click="activeSheet = null">Tutup</button>
             </div>
 
             <div x-show="!submitSuccess">
-                
                 <div x-show="!rsvpStatus">
                     <p style="text-align: center; color: #666; margin-bottom: 20px;">Sila sahkan kehadiran anda ke majlis kami.</p>
                     <button type="button" class="btn-outline" @click="rsvpStatus = 'Hadir'">Hadir</button>
@@ -162,26 +390,14 @@
 
                 <form x-show="rsvpStatus" @submit.prevent="submitRSVP()" style="display: none;">
                     <p style="text-align: center; margin-bottom: 15px; font-size: 0.9rem;">Status: <strong style="color:#D4AF37;" x-text="rsvpStatus"></strong></p>
-
                     <input type="text" x-model="form.name" class="input-field" placeholder="Nama Penuh" required>
                     <input type="tel" x-model="form.phone" class="input-field" placeholder="No. Telefon" required>
-
                     <div x-show="rsvpStatus === 'Hadir'" class="pax-group">
-                        <div>
-                            <label class="form-label">Dewasa</label>
-                            <input type="number" x-model="form.adults" class="input-field" min="1" placeholder="0">
-                        </div>
-                        <div>
-                            <label class="form-label">Kanak-kanak</label>
-                            <input type="number" x-model="form.children" class="input-field" min="0" placeholder="0">
-                        </div>
+                        <div><label class="form-label">Dewasa</label><input type="number" x-model="form.adults" class="input-field" min="1" placeholder="0"></div>
+                        <div><label class="form-label">Kanak-kanak</label><input type="number" x-model="form.children" class="input-field" min="0" placeholder="0"></div>
                     </div>
-
                     <input type="text" x-model="form.message" class="input-field" placeholder="Ucapan (Pilihan)">
-
-                    <button type="submit" class="btn-gold" :disabled="isSubmitting">
-                        <span x-text="isSubmitting ? 'Menghantar...' : 'Hantar RSVP'"></span>
-                    </button>
+                    <button type="submit" class="btn-gold" :disabled="isSubmitting"><span x-text="isSubmitting ? 'Menghantar...' : 'Hantar RSVP'"></span></button>
                     <button type="button" class="btn-text" @click="rsvpStatus = null">Kembali</button>
                 </form>
             </div>
@@ -191,16 +407,22 @@
             <button class="btn-close-sheet" @click="activeSheet = null"><i class="ph ph-x"></i></button>
             <div class="sheet-header">Salam Kaup</div>
             <div style="text-align: center;">
-                <p style="color: #666; margin-bottom: 20px; font-size: 0.9rem;">Seikhlas hati, seumpama budi. Terima kasih atas ingatan dan doa anda.</p>
+                <p style="color: #666; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.6;">Your presence is the best gift we could receive. However, if you wish to contribute to our new life together, you can do so via bank transfer.</p>
+                
                 <div style="background: #fafafa; border: 1px solid #eaeaea; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
-                    <img src="https://via.placeholder.com/150?text=DuitNow+QR" alt="QR Code" style="width: 150px; height: 150px; margin-bottom: 15px; border-radius: 10px;">
-                    <h3 style="color: #333; margin-bottom: 5px;">Maybank</h3>
+                    <img src="images/qrcode.png" alt="QR Code Bank Islam" style="width: 150px; height: 150px; margin-bottom: 15px; border-radius: 10px;">
+                    <h3 style="color: #333; font-family: 'Playfair Display', serif; margin-bottom: 5px;">Bank Islam</h3>
                     <p style="font-size: 1.2rem; font-weight: bold; letter-spacing: 2px; margin-bottom: 5px;">1622 3344 5566</p>
-                    <p style="color: #888; font-size: 0.8rem; margin-bottom: 15px;">Ahmad Bin Abu Bakar</p>
+                    <p style="color: #888; font-size: 0.8rem; margin-bottom: 15px;">Faizatul Fitri</p>
                     
-                    <button class="btn-outline" @click="navigator.clipboard.writeText('162233445566'); alert('Nombor akaun berjaya disalin!')">
-                        <i class="ph ph-copy" style="vertical-align: middle;"></i> Salin Nombor Akaun
-                    </button>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button class="btn-outline" style="margin-bottom: 0; padding: 10px 15px; font-size: 0.85rem;" @click="navigator.clipboard.writeText('162233445566'); alert('Nombor akaun berjaya disalin!')">
+                            <i class="ph ph-copy" style="vertical-align: middle;"></i> Salin Nombor
+                        </button>
+                        <a href="images/qrcode.png" download="QR_Faizatul.jpg" class="btn-outline" style="margin-bottom: 0; padding: 10px 15px; font-size: 0.85rem; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                            <i class="ph ph-download-simple" style="margin-right: 5px;"></i> Muat Turun
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -208,26 +430,18 @@
         <div class="bottom-sheet" :class="activeSheet === 'contact' ? 'is-active' : ''">
             <button class="btn-close-sheet" @click="activeSheet = null"><i class="ph ph-x"></i></button>
             <div class="sheet-header">Hubungi Kami</div>
-            
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #eaeaea; border-radius: 15px; margin-bottom: 15px;">
-                <div>
-                    <h4 style="color: #333;">Ahmad</h4>
-                    <p style="color: #888; font-size: 0.8rem;">Pengantin Lelaki</p>
-                </div>
+                <div><h4 style="color: #333; font-family: 'Playfair Display', serif;">Faizatul Fitri</h4><p style="color: #888; font-size: 0.8rem;">Pengantin Lelaki</p></div>
                 <div style="display: flex; gap: 10px;">
-                    <a href="tel:+60123456789" style="background: #f4f0ec; color: #D4AF37; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-phone"></i></a>
-                    <a href="https://wa.me/60123456789" target="_blank" style="background: #25D366; color: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-whatsapp-logo"></i></a>
+                    <a href="tel:+60128720170" style="background: #f4f0ec; color: #D4AF37; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-phone"></i></a>
+                    <a href="https://wa.me/60128720170" target="_blank" style="background: #25D366; color: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-whatsapp-logo"></i></a>
                 </div>
             </div>
-
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #eaeaea; border-radius: 15px;">
-                <div>
-                    <h4 style="color: #333;">Fatimah</h4>
-                    <p style="color: #888; font-size: 0.8rem;">Pengantin Perempuan</p>
-                </div>
+                <div><h4 style="color: #333; font-family: 'Playfair Display', serif;">Nurul Batrisyia</h4><p style="color: #888; font-size: 0.8rem;">Pengantin Perempuan</p></div>
                 <div style="display: flex; gap: 10px;">
-                    <a href="tel:+60198765432" style="background: #f4f0ec; color: #D4AF37; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-phone"></i></a>
-                    <a href="https://wa.me/60198765432" target="_blank" style="background: #25D366; color: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-whatsapp-logo"></i></a>
+                    <a href="tel:+60173541310" style="background: #f4f0ec; color: #D4AF37; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-phone"></i></a>
+                    <a href="https://wa.me/60173541310" target="_blank" style="background: #25D366; color: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-whatsapp-logo"></i></a>
                 </div>
             </div>
         </div>
@@ -235,99 +449,169 @@
         <div class="bottom-sheet" :class="activeSheet === 'location' ? 'is-active' : ''">
             <button class="btn-close-sheet" @click="activeSheet = null"><i class="ph ph-x"></i></button>
             <div class="sheet-header">Lokasi Majlis</div>
-            <img src="https://via.placeholder.com/400x200?text=Peta+Lokasi" style="width: 100%; border-radius: 10px; margin-bottom: 15px;">
-            <h3 style="color: #333; margin-bottom: 5px; text-align: center;">Dewan Utama</h3>
-            <p style="color: #666; font-size: 0.9rem; text-align: center; margin-bottom: 20px;">No 1, Jalan Majlis, 50000 Kuala Lumpur</p>
-            
-            <a href="https://maps.google.com/?q=Kuala+Lumpur" target="_blank" class="btn-outline" style="display: block; text-align: center; text-decoration: none; margin-bottom: 10px;">
-                <i class="ph ph-google-logo" style="vertical-align: middle;"></i> Buka Google Maps
-            </a>
-            <a href="https://waze.com/ul?q=Kuala+Lumpur" target="_blank" class="btn-outline" style="display: block; text-align: center; text-decoration: none;">
-                <i class="ph ph-navigation-arrow" style="vertical-align: middle;"></i> Buka Waze
-            </a>
+            <img src="images/masjid2.jpg" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" alt="Peta Masjid">
+            <h3 style="color: #333; font-family: 'Playfair Display', serif; margin-bottom: 5px; text-align: center;">Masjid Al-Abyad</h3>
+            <p style="color: #666; font-size: 0.9rem; text-align: center; margin-bottom: 20px;">Jln Matang Jaya, Taman Matang Jaya, Kuching, Sarawak</p>
+            <a href="https://maps.app.goo.gl/D9oXZfg166U2ehAWA" target="_blank" class="btn-outline" style="display: block; text-align: center; text-decoration: none; margin-bottom: 10px;"><i class="ph ph-google-logo" style="vertical-align: middle;"></i> Buka Google Maps</a>
+            <a href="https://ul.waze.com/ul?place=ChIJkbsL09oH-zER-h3j5DT06HQ&ll=1.58037330%2C110.29830990&navigate=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location" target="_blank" class="btn-outline" style="display: block; text-align: center; text-decoration: none;"><i class="ph ph-navigation-arrow" style="vertical-align: middle;"></i> Buka Waze</a>
         </div>
 
         <div class="bottom-sheet" :class="activeSheet === 'calendar' ? 'is-active' : ''">
             <button class="btn-close-sheet" @click="activeSheet = null"><i class="ph ph-x"></i></button>
             <div class="sheet-header">Simpan Tarikh</div>
-            <div style="text-align: center; margin-bottom: 30px; margin-top: 20px;">
-                <h1 style="color: #D4AF37; font-size: 5rem; line-height: 1;">24</h1>
-                <h3 style="color: #333; text-transform: uppercase; letter-spacing: 2px;">Ogos 2026</h3>
-                <p style="color: #888; margin-top: 5px;">Sabtu • 11:00 Pagi - 4:00 Petang</p>
-            </div>
             
-            <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Walimatul+Urus+Ahmad+%26+Fatimah&dates=20260824T030000Z/20260824T080000Z&details=Sila+hadir+memeriahkan+majlis+kami.&location=Dewan+Utama,+Kuala+Lumpur" target="_blank" class="btn-gold" style="display: block; text-align: center; text-decoration: none; width: 100%;">
-                <i class="ph ph-calendar-plus" style="vertical-align: middle;"></i> Tambah ke Google Calendar
-            </a>
+            <div style="text-align: center; margin-bottom: 20px; margin-top: 10px;">
+                <h1 style="color: #D4AF37; font-size: 4rem; line-height: 1; font-family: 'Playfair Display', serif;">26</h1>
+                <h3 style="color: #333; text-transform: uppercase; letter-spacing: 2px;">Jun 2026</h3>
+                <p style="color: #888; margin-top: 5px; font-size: 0.9rem;">Jumaat • Selepas Asar</p>
+            </div>
+
+            <div class="mini-calendar">
+                <div class="cal-header">Jun 2026</div>
+                <div class="cal-grid">
+                    <div class="cal-day">A</div><div class="cal-day">I</div><div class="cal-day">S</div><div class="cal-day">R</div><div class="cal-day">K</div><div class="cal-day">J</div><div class="cal-day">S</div>
+                    <div class="cal-date"></div><div class="cal-date">1</div><div class="cal-date">2</div><div class="cal-date">3</div><div class="cal-date">4</div><div class="cal-date">5</div><div class="cal-date">6</div>
+                    <div class="cal-date">7</div><div class="cal-date">8</div><div class="cal-date">9</div><div class="cal-date">10</div><div class="cal-date">11</div><div class="cal-date">12</div><div class="cal-date">13</div>
+                    <div class="cal-date">14</div><div class="cal-date">15</div><div class="cal-date">16</div><div class="cal-date">17</div><div class="cal-date">18</div><div class="cal-date">19</div><div class="cal-date">20</div>
+                    <div class="cal-date">21</div><div class="cal-date">22</div><div class="cal-date">23</div><div class="cal-date">24</div><div class="cal-date">25</div><div class="cal-date active">26</div><div class="cal-date">27</div>
+                    <div class="cal-date">28</div><div class="cal-date">29</div><div class="cal-date">30</div><div class="cal-date"></div><div class="cal-date"></div><div class="cal-date"></div><div class="cal-date"></div>
+                </div>
+            </div>
+
+            <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Walimatul+Urus+Nurul+%26+Faizatul&dates=20260626T080000Z/20260626T140000Z&details=Sila+hadir+memeriahkan+majlis+kami.&location=Masjid+Al-Abyad,+Matang,+Kuching" target="_blank" class="btn-gold" style="display: block; text-align: center; text-decoration: none; width: 100%;"><i class="ph ph-calendar-plus" style="vertical-align: middle;"></i> Tambah ke Google Calendar</a>
         </div>
         
-        <div class="bottom-nav">
-            <div class="nav-item" :class="activeSheet === 'rsvp' ? 'active' : ''" @click="toggleSheet('rsvp')">
-                <i class="ph ph-envelope-open"></i><span>RSVP</span>
-            </div>
-            <div class="nav-item" :class="activeSheet === 'gift' ? 'active' : ''" @click="toggleSheet('gift')">
-                <i class="ph ph-gift"></i><span>Hadiah</span>
-            </div>
-            <div class="nav-item" :class="activeSheet === 'contact' ? 'active' : ''" @click="toggleSheet('contact')">
-                <i class="ph ph-phone"></i><span>Hubungi</span>
-            </div>
-            <div class="nav-item" :class="activeSheet === 'location' ? 'active' : ''" @click="toggleSheet('location')">
-                <i class="ph ph-map-pin"></i><span>Lokasi</span>
-            </div>
-            <div class="nav-item" :class="activeSheet === 'calendar' ? 'active' : ''" @click="toggleSheet('calendar')">
-                <i class="ph ph-calendar-plus"></i><span>Kalendar</span>
-            </div>
+        <div class="bottom-nav" :class="(introFinished && isScratched) ? 'is-visible' : ''">
+            <div class="nav-item" :class="activeSheet === 'rsvp' ? 'active' : ''" @click="toggleSheet('rsvp')"><i class="ph ph-envelope-open"></i><span>RSVP</span></div>
+            <div class="nav-item" :class="activeSheet === 'gift' ? 'active' : ''" @click="toggleSheet('gift')"><i class="ph ph-gift"></i><span>Hadiah</span></div>
+            <div class="nav-item" :class="activeSheet === 'contact' ? 'active' : ''" @click="toggleSheet('contact')"><i class="ph ph-phone"></i><span>Hubungi</span></div>
+            <div class="nav-item" :class="activeSheet === 'location' ? 'active' : ''" @click="toggleSheet('location')"><i class="ph ph-map-pin"></i><span>Lokasi</span></div>
+            <div class="nav-item" :class="activeSheet === 'calendar' ? 'active' : ''" @click="toggleSheet('calendar')"><i class="ph ph-calendar-plus"></i><span>Kalendar</span></div>
         </div>
 
     </div>
 
     <script>
+        function countdownTimer() {
+            return {
+                days: '00', hours: '00', minutes: '00', seconds: '00',
+                start() {
+                    const countDownDate = new Date("Jun 26, 2026 16:30:00").getTime();
+                    setInterval(() => {
+                        const distance = countDownDate - new Date().getTime();
+                        if (distance < 0) return;
+                        this.days = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                        this.hours = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                        this.minutes = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                        this.seconds = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+                    }, 1000);
+                }
+            }
+        }
+
         function appData() {
             return {
-                envelopeOpened: false,
+                animState: 'idle',
+                introFinished: false,
                 activeSheet: null,
                 isPlaying: false,
+                isScratched: false,
+                messages: [],
+                isLoadingMessages: true, 
                 
-                // RSVP State
                 rsvpStatus: null,
                 isSubmitting: false,
                 submitSuccess: false,
                 form: { name: '', phone: '', adults: '', children: '', message: '' },
 
-                openKad() { this.envelopeOpened = true; this.playAudio(); },
-                closeKad() { this.envelopeOpened = false; this.activeSheet = null; this.pauseAudio(); this.$refs.storyScroll.scrollTop = 0; },
+                openKad() { 
+                    if (this.animState !== 'idle') return; 
+                    
+                    this.animState = 'opening'; 
+                    this.playAudio(); 
+                    
+                    setTimeout(() => {
+                        this.introFinished = true;
+                        if (!this.isScratched) {
+                            setTimeout(() => initScratchCard(this), 100); 
+                        }
+                    }, 3800); 
+                },
+
+                closeKad() {
+                    this.pauseAudio();
+                    this.activeSheet = null;
+                    this.$refs.storyScroll.scrollTop = 0;
+                    
+                    this.introFinished = false; 
+                    this.animState = 'closing';
+                    
+                    setTimeout(() => {
+                        this.animState = 'idle';
+                    }, 3000);
+                },
+
                 toggleSheet(sheetName) { this.activeSheet = this.activeSheet === sheetName ? null : sheetName; },
                 toggleAudio() { this.isPlaying ? this.pauseAudio() : this.playAudio(); },
                 playAudio() { this.$refs.bgMusic.play(); this.isPlaying = true; },
                 pauseAudio() { this.$refs.bgMusic.pause(); this.isPlaying = false; },
 
-                // The AJAX Submission to Google Sheets
+                revealDate() {
+                    if (this.isScratched) return;
+                    this.isScratched = true;
+                    this.$refs.cheerSound.play();
+                    
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#D4AF37', '#8B5A2B', '#FFFFFF']
+                    });
+                },
+
+                fetchMessages() {
+                    const googleUrl = 'https://script.google.com/macros/s/AKfycbzDZttIC0pf3bBlPvlCtAEwmVP9Kwnvu9-4scxF2CbDyIkeovxXsY-_GIytcruMBq5Pyg/exec';
+                    
+                    fetch(googleUrl)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.result === 'success') {
+                                this.messages = data.data;
+                            }
+                            this.isLoadingMessages = false;
+                        })
+                        .catch(error => {
+                            console.error("Error fetching messages:", error);
+                            this.isLoadingMessages = false;
+                        });
+                },
+
                 submitRSVP() {
                     this.isSubmitting = true;
+                    const newName = this.form.name;
+                    const newMessage = this.form.message;
                     
-                    // Bundle the data
                     const payload = {
-                        name: this.form.name,
-                        phone: this.form.phone,
-                        attendance: this.rsvpStatus,
+                        name: this.form.name, phone: this.form.phone, attendance: this.rsvpStatus,
                         adults: this.rsvpStatus === 'Hadir' ? this.form.adults : '0',
                         children: this.rsvpStatus === 'Hadir' ? this.form.children : '0',
                         message: this.form.message
                     };
 
-                    // PASTE YOUR GOOGLE WEB APP URL HERE INSIDE THE QUOTES
                     const googleUrl = 'https://script.google.com/macros/s/AKfycbzDZttIC0pf3bBlPvlCtAEwmVP9Kwnvu9-4scxF2CbDyIkeovxXsY-_GIytcruMBq5Pyg/exec';
 
                     fetch(googleUrl, {
-                        method: 'POST',
-                        mode: 'no-cors', // Bypasses cross-origin blocks silently
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                     })
                     .then(() => {
                         this.isSubmitting = false;
                         this.submitSuccess = true;
-                        this.form = { name: '', phone: '', adults: '', children: '', message: '' }; // Reset form
+                        
+                        if (newMessage && newMessage.trim() !== '') {
+                            this.messages.unshift({ name: newName, message: newMessage });
+                        }
+                        
+                        this.form = { name: '', phone: '', adults: '', children: '', message: '' }; 
                     })
                     .catch(error => {
                         alert("Ralat semasa menghantar. Sila cuba lagi.");
@@ -335,6 +619,66 @@
                     });
                 }
             }
+        }
+
+        function initScratchCard(appContext) {
+            const canvas = document.getElementById('scratchCanvas');
+            if (!canvas) return;
+            
+            if (appContext.isScratched) {
+                canvas.style.display = 'none';
+                return;
+            } else {
+                canvas.style.display = 'block'; 
+            }
+
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            canvas.width = 300; canvas.height = 150;
+            
+            const gradient = ctx.createLinearGradient(0, 0, 300, 150);
+            gradient.addColorStop(0, "#D4AF37"); gradient.addColorStop(1, "#8B5A2B"); 
+            ctx.fillStyle = gradient; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = "#ffffff"; ctx.font = "bold 20px 'Playfair Display'"; ctx.textAlign = "center"; ctx.fillText("Teka Tarikh", 150, 80);
+
+            let isDrawing = false;
+
+            function getMousePos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return { x: clientX - rect.left, y: clientY - rect.top };
+            }
+
+            function scratch(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+                const pos = getMousePos(e);
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath(); ctx.arc(pos.x, pos.y, 25, 0, Math.PI * 2); ctx.fill();
+                checkReveal();
+            }
+
+            function checkReveal() {
+                if (appContext.isScratched) return;
+                const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                let transparentPixels = 0;
+                for (let i = 3; i < pixels.length; i += 4) { if (pixels[i] === 0) transparentPixels++; }
+                
+                if ((transparentPixels / (pixels.length / 4)) * 100 > 60) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    canvas.style.display = 'none'; 
+                    appContext.revealDate();
+                }
+            }
+
+            canvas.addEventListener('mousedown', (e) => { isDrawing = true; scratch(e); });
+            canvas.addEventListener('mousemove', scratch);
+            canvas.addEventListener('mouseup', () => { isDrawing = false; });
+            canvas.addEventListener('mouseleave', () => { isDrawing = false; });
+            canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); }, { passive: false });
+            canvas.addEventListener('touchmove', scratch, { passive: false });
+            canvas.addEventListener('touchend', () => { isDrawing = false; });
         }
     </script>
 </body>
