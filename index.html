@@ -92,7 +92,23 @@
         }
         .intro-screen.is-finished { opacity: 0; pointer-events: none; }
 
-        .envelope-wrapper { position: relative; width: 340px; height: 220px; z-index: 10; }
+        /* ==========================================================================
+           2. INTRO SCREEN & ENVELOPE (DIASINGKAN DARI BACKGROUND)
+           ========================================================================== */
+        
+        .envelope-wrapper { 
+            position: relative; 
+            width: 340px; 
+            height: 220px; 
+            z-index: 10; 
+            
+            /* MAGIK MENGECILKAN SELURUH SET SAMPUL */
+            /* Ubah nilai 0.75 ini jika nak adjust lagi. (Contoh: 0.7 untuk lebih kecil, 0.8 untuk besar sikit) */
+            transform: scale(0.75); 
+            transform-origin: center center; 
+
+            left: 2.5px;
+        }
 
         @keyframes dropIn { 0% { transform: translateY(-100vh); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
