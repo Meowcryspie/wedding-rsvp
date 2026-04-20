@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Walimatul Urus | Nurul & Faizatul</title>
+    
+    <meta property="og:title" content="Walimatul Urus | Nurul & Faizatul">
+    <meta property="og:description" content="Khas buat keluarga dan kenalan. Sila klik untuk menjawab RSVP dan melihat butiran majlis kami.">
+    <meta property="og:image" content="images/preview.jpg">
+    <meta property="og:type" content="website">
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+
+    <style>
+        /* === BASE THEME & RESET === */
+        
+        /* --- SKRIN LOADING PREMIUM --- */
+        #preloader {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #FAF8F5; /* Warna krim ikut tema kad */
+            z-index: 9999; /* Mesti paling tinggi supaya tutup semua benda */
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        #preloader.is-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        
+        /* Animasi Bulatan Loading (Spinner) */
+        .spinner-ring {
+            width: 40px; height: 40px;
+            border: 3px solid rgba(212, 175, 55, 0.2); /* Warna emas pudar */
+            border-top-color: #D4AF37; /* Warna emas solid */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .loading-text {
+            font-family: 'Lora', serif; font-size: 0.85rem; color: #8B5A2B;
+            letter-spacing: 2px; text-transform: uppercase;
+            animation: pulseText 1.5s infinite;
+        }
+        @keyframes pulseText { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        
+        /* --- OPTIMIZATION LALUAN KECEMASAN GPU (YANG BETUL & SELAMAT) --- */
+        /* Kita hanya paksa GPU render imej besar di belakang supaya fon tak lag. 
+           JANGAN letak pada elemen sampul (envelope) supaya bentuk lipatan tak terpotong. */
+        .bg-layer-archway, 
+        .bg-layer-gazebo, 
+        .story-container {
+            will-change: transform, opacity;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #FFFFFF; font-family: 'Lora', serif; position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; overflow: hidden; }
+        .app-frame { width: 100%; max-width: 420px; height: 100%; background-color: #FAF8F5; position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.05); }
+        
+        /* ==========================================================================
+           1. CINEMATIC BACKGROUND LAYERS (SYNCED ZOOM & CROSSFADE)
+           ========================================================================== */
+        
+        .bg-layer-gazebo {
+            position: absolute; inset: 0; z-index: 1;
+            background-image: url('images/bg-gazebo.webp'); 
+            background-size: cover; 
+            background-position: center;
+            opacity: 0; 
+        }
+        .bg-layer-gazebo.is-finished { opacity: 1; transform: scale(1); }
+
+        .bg-layer-archway {
+            position: absolute; inset: 0; z-index: 2;
+            background-image: url('images/bg - Copy.webp'); 
+            background-size: cover; 
+            background-position: center;
+            transform-origin: center 55%; 
+            opacity: 1; 
+        }
+
+        .bg-layer-archway::before {
+            content: ''; position: absolute; inset: 0; z-index: 0; 
+            background-image: url('images/bg - Copy.webp'); 
+            background-size: cover; background-position: center; 
+            filter: blur(3px) brightness(1.05);
+            -webkit-mask-image: radial-gradient(circle at center, black 15%, transparent 65%);
+            mask-image: radial-gradient(circle at center, black 15%, transparent 65%);
+        }
+        
+        .bg-layer-archway.is-finished { opacity: 0; transform: scale(4.5); }
+
+        .is-zooming-bg { animation: archwaySync 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .is-fading-in-bg { animation: gazeboSync 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+        @keyframes archwaySync {
+            0%, 75% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(4.5); opacity: 0; }
+        }
+        @keyframes gazeboSync {
+            0%, 75% { opacity: 0; transform: scale(1.1); } 
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .is-reversing-archway { animation: archwayReverseSync 3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .is-reversing-gazebo { animation: gazeboReverseSync 3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+        @keyframes archwayReverseSync {
+            0% { transform: scale(4.5); opacity: 0; }
+            15%, 100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes gazeboReverseSync {
+            0% { opacity: 1; transform: scale(1); }
+            15%, 100% { opacity: 0; transform: scale(1.1); }
+        }
+
+        /* ==========================================================================
+           2. INTRO SCREEN & ENVELOPE (DIASINGKAN DARI BACKGROUND)
+           ========================================================================== */
+        .intro-screen { 
+            position: absolute; inset: 0; z-index: 100; 
+            display: flex; justify-content: center; align-items: center; 
+            transition: opacity 1s ease; overflow: hidden; 
+            background: transparent; 
+        }
+        .intro-screen.is-finished { opacity: 0; pointer-events: none; }
+
+        /* ==========================================================================
+           2. INTRO SCREEN & ENVELOPE (DIASINGKAN DARI BACKGROUND)
+           ========================================================================== */
+        
+        .envelope-wrapper { 
+            position: relative; 
+            width: 340px; 
+            height: 220px; 
+            z-index: 10; 
+            
+            /* MAGIK MENGECILKAN SELURUH SET SAMPUL */
+            /* Ubah nilai 0.75 ini jika nak adjust lagi. (Contoh: 0.7 untuk lebih kecil, 0.8 untuk besar sikit) */
+            transform: scale(0.75); 
+            transform-origin: center center; 
+
+            left: 2.5px;
+        }
+
+        @keyframes dropIn { 0% { transform: translateY(-100vh); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        
+        .drop-wrapper { animation: dropIn 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .float-wrapper { animation: float 3.5s ease-in-out infinite; animation-delay: 1.2s; perspective: 1000px; }
+
+        /* ==========================================================================
+           3. STRUKTUR SAMPUL BARU & SEAL TRANSPARENT
+           ========================================================================== */
+        .env-back { position: absolute; inset: 0; border-radius: 5px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); z-index: 1; overflow: hidden; background: #656358; }
+        .env-back::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(101, 99, 88, 0.75), rgba(101, 99, 88, 0.75)), url('images/pattern.webp'); background-size: cover; background-position: center; transform: scaleX(-1); }
+        .flap-texture { position: absolute; inset: 0; background-image: url('images/pattern.webp'); background-size: cover; background-position: center; border-radius: 5px; }
+        .env-front-group { position: absolute; inset: 0; z-index: 4; transform-style: preserve-3d; pointer-events: none; border-radius: 5px; overflow: hidden; }
+        .env-flap-left { clip-path: polygon(0 0, 170px 125px, 0 100%); z-index: 3; }
+        .env-flap-right { clip-path: polygon(100% 0, 170px 125px, 100% 100%); z-index: 3; }
+        .env-flap-bottom { clip-path: polygon(0 100%, 100% 100%, 170px 125px); z-index: 4; filter: drop-shadow(0 -5px 8px rgba(0,0,0,0.4)); }
+        .env-top { position: absolute; inset: 0; transform-origin: center 1px; z-index: 5; transform-style: preserve-3d; border-radius: 5px; overflow: hidden; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.4)); }
+        .env-top-clip { clip-path: polygon(0 0, 100% 0, 170px 125px); }
+
+        /* Garisan V Bawah (Bayang halakan ke ATAS / Ke Dalam) */
+        .static-lines { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+        .static-lines::before, .static-lines::after { 
+            content: ''; position: absolute; bottom: -1px; height: 1.5px; 
+            background: #B38B22; border-radius: 2px; 
+            box-shadow: 0 -5px 10px -1px rgba(0, 0, 0, 0.85); 
+        }
+        .static-lines::before { left: 0; width: 196px; transform-origin: 0 1px; transform: rotate(-29.2deg); }
+        .static-lines::after { right: 0; width: 196px; transform-origin: 100% 1px; transform: rotate(29.2deg); }
+
+        /* Garisan V Atas (Bayang halakan ke BAWAH / Ke Dalam) */
+        .moving-lines { position: absolute; inset: 0; pointer-events: none; }
+        .moving-lines::before, .moving-lines::after { 
+            content: ''; position: absolute; top: -1px; height: 1.5px; 
+            background: #B38B22; border-radius: 2px; 
+            box-shadow: 0 5px 10px -1px rgba(0, 0, 0, 0.85);
+        }
+        .moving-lines::before { left: 0; width: 212.5px; transform-origin: 0 1px; transform: rotate(36.33deg); }
+        .moving-lines::after { right: 0; width: 212.5px; transform-origin: 100% 1px; transform: rotate(-36.33deg); }
+
+        .env-seal { 
+            position: absolute; top: 125px; left: 50%; transform: translate(-50%, -50%); 
+            width: 100px; height: 100px; z-index: 6; cursor: pointer; pointer-events: auto; 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background-image: url('images/seal - bafa.webp'); 
+            background-size: contain; background-position: center; background-repeat: no-repeat;
+            background-color: transparent; border: none;
+            filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.4)); color: transparent; font-size: 0;
+        }
+        .env-seal:hover { transform: translate(-50%, -50%) scale(1.08); filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.5)); }
+
+        /* ==========================================================================
+           4. WHIMSICAL PASTEL PETAL RAIN
+           ========================================================================== */
+        #petal-container { position: absolute; inset: 0; overflow: hidden; z-index: 150; pointer-events: none; }
+        .petal { position: absolute; top: -10vh; border-radius: 15px 0 15px 15px; opacity: 0.85; box-shadow: 0 2px 5px rgba(0,0,0,0.08); animation: blowing-petals linear infinite; }
+        @keyframes blowing-petals { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(-80vw, 120vh) rotate(720deg); } }
+
+        /* ==========================================================================
+           5. ANIMASI BUKA/TUTUP SAMPUL & SURAT
+           ========================================================================== */
+        .is-opening .env-seal { animation: popSeal 4.5s forwards; }
+        @keyframes popSeal { 0% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 5%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); pointer-events: none; } }
+        .is-opening .env-top { animation: topFlapAnim 4.5s forwards; }
+        @keyframes topFlapAnim { 0%, 5% { transform: rotateX(0deg) translateX(0); z-index: 5; opacity: 1; } 10% { transform: rotateX(179.9deg) translateX(0); z-index: 5; opacity: 1; } 11% { transform: rotateX(179.9deg) translateX(0); z-index: 2; opacity: 1; } 30% { transform: rotateX(179.9deg) translateX(0); z-index: 2; opacity: 1; } 45%, 100% { transform: rotateX(179.9deg) translateX(-100vw); z-index: 2; opacity: 0; } }
+        .is-opening .env-back, .is-opening .env-front-group { animation: shellExit 4.5s ease forwards; }
+        @keyframes shellExit { 0%, 30% { transform: translateX(0); opacity: 1; } 45%, 100% { transform: translateX(-100vw); opacity: 0; } }
+        .is-opening .env-letter { animation: letterSlideZoom 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes letterSlideZoom { 0%, 15% { transform: translateY(0) scale(1); filter: blur(0px); opacity: 1; } 30%, 40% { transform: translateY(-230px) scale(0.9); filter: blur(0px); opacity: 1; } 55%, 75% { transform: translateY(-30px) scale(1); filter: blur(0px); opacity: 1; } 100% { transform: translateY(50px) scale(4); filter: blur(6px); opacity: 0; } }
+
+        .is-closing .env-seal { animation: reverseSeal 3s forwards; }
+        @keyframes reverseSeal { 0%, 85% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); pointer-events: none; } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; } }
+        .is-closing .env-top { animation: reverseTopFlap 3s forwards; }
+        @keyframes reverseTopFlap { 0%, 45% { transform: rotateX(179.9deg) translateX(-100vw); z-index: 2; opacity: 0; } 60%, 80% { transform: rotateX(179.9deg) translateX(0); z-index: 2; opacity: 1; } 81% { transform: rotateX(179.9deg) translateX(0); z-index: 5; opacity: 1; } 100% { transform: rotateX(0deg) translateX(0); z-index: 5; opacity: 1; } }
+        .is-closing .env-back, .is-closing .env-front-group { animation: reverseShellExit 3s ease forwards; }
+        @keyframes reverseShellExit { 0%, 45% { transform: translateX(-100vw); opacity: 0; } 60%, 100% { transform: translateX(0); opacity: 1; } }
+        .is-closing .env-letter { animation: reverseLetterSlideZoom 3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes reverseLetterSlideZoom { 0% { transform: translateY(50px) scale(4); filter: blur(6px); opacity: 0; } 15% { transform: translateY(-30px) scale(1); filter: blur(0px); opacity: 1; } 30% { transform: translateY(-30px) scale(1); } 45%, 60% { transform: translateY(-230px) scale(0.9); } 80%, 100% { transform: translateY(0) scale(1); } }
+
+        /* ==========================================================================
+           SURAT TRI-FOLD DENGAN BLURRED GAZEBO BACKGROUND (FROSTED GLASS EFFECT)
+           ========================================================================== */
+        .env-letter { 
+            position: absolute; bottom: 10px; left: 20px; width: 300px; height: 200px; 
+            border-radius: 5px; z-index: 3; transform-style: preserve-3d; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            background: transparent; 
+            border-left: 1.5px solid rgba(255, 255, 255, 0.7);
+            border-right: 1.5px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25); 
+        }
+        
+        .letter-top { 
+            position: absolute; bottom: 100%; left: 0; width: 300px; height: 100px; 
+            transform-origin: bottom; transform: rotateX(179.9deg); backface-visibility: hidden; border-radius: 5px 5px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            background: transparent; 
+            border-top: 1.5px solid rgba(255, 255, 255, 0.7);
+            border-left: 1.5px solid rgba(255, 255, 255, 0.7);
+            border-right: 1.5px solid rgba(255, 255, 255, 0.7);
+            border-bottom: 1px dashed rgba(0,0,0,0.15); 
+        }
+        
+        .letter-bottom { 
+            position: absolute; top: 100%; left: 0; width: 300px; height: 200px; 
+            transform-origin: top; transform: rotateX(-179.9deg); backface-visibility: hidden; border-radius: 0 0 5px 5px; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            background: transparent; 
+            border-bottom: 1.5px solid rgba(255, 255, 255, 0.7);
+            border-left: 1.5px solid rgba(255, 255, 255, 0.7);
+            border-right: 1.5px solid rgba(255, 255, 255, 0.7);
+            border-top: 1px dashed rgba(0,0,0,0.15); 
+        }
+
+        .env-letter::before, .letter-top::before, .letter-bottom::before {
+            content: ''; position: absolute; inset: -15px; z-index: -1; 
+            background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('images/bg-gazebo.webp');
+            background-size: 300px 500px; filter: blur(6px); clip-path: inset(15px round 5px); 
+        }
+
+        .env-letter::before { background-position: center -100px; }
+        .letter-top::before { background-position: center 0px; }
+        .letter-bottom::before { background-position: center -300px; }
+
+        .is-opening .letter-top { animation: unfoldTop 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes unfoldTop { 0%, 55% { transform: rotateX(179.9deg); box-shadow: 0 0 0 rgba(0,0,0,0); } 70%, 100% { transform: rotateX(0deg); box-shadow: 0 -5px 15px rgba(0,0,0,0.05); } }
+        .is-opening .letter-bottom { animation: unfoldBottom 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes unfoldBottom { 0%, 55% { transform: rotateX(-179.9deg); box-shadow: 0 0 0 rgba(0,0,0,0); } 70%, 100% { transform: rotateX(0deg); box-shadow: 0 5px 15px rgba(0,0,0,0.05); } }
+        .is-closing .letter-top { animation: reverseUnfoldTop 3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes reverseUnfoldTop { 0%, 15% { transform: rotateX(0deg); box-shadow: 0 -5px 15px rgba(0,0,0,0.05); } 30%, 100% { transform: rotateX(179.9deg); box-shadow: 0 0 0 rgba(0,0,0,0); } }
+        .is-closing .letter-bottom { animation: reverseUnfoldBottom 3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes reverseUnfoldBottom { 0%, 15% { transform: rotateX(0deg); box-shadow: 0 5px 15px rgba(0,0,0,0.05); } 30%, 100% { transform: rotateX(-179.9deg); box-shadow: 0 0 0 rgba(0,0,0,0); } }
+
+        /* Dummy Text inside Envelope */
+        .dummy-text-gold { color: #D4AF37; font-size: 1.5rem; font-family: 'Amiri', serif; margin-bottom: 10px; }
+        .dummy-text-name { font-family: 'Great Vibes', cursive; font-size: 2.8rem; color: #4A3B32; line-height: 1; margin: 5px 0; }
+        .dummy-text-amp { color: #D4AF37; font-size: 2rem; font-style: italic; font-family: 'Playfair Display', serif; }
+        .blur-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .blur-line { background: #e0d5c1; border-radius: 2px; opacity: 0.7; filter: blur(0.8px); }
+
+        /* ==========================================================================
+           6. MASTER STORY UI CSS (GAZEBO HEADER & BLUR TEXT BOXES)
+           ========================================================================== */
+        
+        /* 1. CONTAINER: Latar belakang putih bersih untuk bahagian bawah (RSVP/Scratch) */
+        .story-container { 
+            height: 100%; padding-bottom: 120px; 
+            background-color: #FAF8F5; /* Putih bersih */
+            scroll-behavior: smooth; overflow-y: auto; position: relative; 
+            z-index: 100; opacity: 0; transform: scale(0.95); 
+            transition: opacity 1s ease, transform 1s ease; pointer-events: none; 
+            padding-bottom: 0 !important; /* Paksa buang ruang putih di bawah */
+        }
+        .story-container.is-revealed { opacity: 1; transform: scale(1); pointer-events: auto; }
+
+        /* 2. HEADER GAZEBO: Melekat kat atas, berhenti kat bintang + Ombre */
+        .gazebo-header-bg {
+            position: absolute; 
+            top: 0; left: 0; right: 0;
+            height: 85vh; /* Berhenti di kawasan bintang */
+            z-index: 0; 
+            pointer-events: none;
+            
+            background-image: url('images/bg-gazebo.webp');
+            background-size: cover;
+            background-position: center top;
+            
+            /* OMBRE: Gambar pudar secara smooth ke putih */
+            -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+        }
+
+        /* 3. KOTAK KABUR TEKS: Hanya kabur di belakang tulisan */
+        /* 3. PREMIUM VELLUM CARD OVERLAY */
+        .vellum-card {
+            background: rgba(250, 248, 245, 0.45); /* Warna krim lutsinar */
+            backdrop-filter: blur(3px); /* Kaca kabur yang lembut */
+            -webkit-backdrop-filter: blur(3px);
+            
+            width: 88%; /* Lebar kad (Kiri & kanan akan nampak background asal) */
+            max-width: 380px;
+            margin: 0 auto;
+            padding: 40px 20px 30px; /* Ruang bernafas yang luas */
+            border-radius: 20px; /* Bucu membulat */
+            
+            /* Elemen Premium: Garisan emas sangat nipis & bayang lembut */
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05); 
+        }
+
+        /* Pastikan elemen dalam story ada di atas gazebo */
+        .story-section { padding: 40px 20px; text-align: center; position: relative; z-index: 2; }
+        .story-title { font-size: 2.2rem; color: #8B5A2B; font-family: 'Playfair Display', serif; font-style: italic; margin-bottom: 15px; font-weight: 600; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+        .story-text { color: #555; line-height: 1.8; font-size: 0.95rem; margin-bottom: 15px; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+        .bride-groom-name { font-size: 3.5rem; color: #4A3B32; margin: 5px 0; font-family: 'Great Vibes', cursive; text-shadow: 0 2px 4px rgba(255,255,255,0.8); line-height: 1.2; }
+        .hashtag { color: #D4AF37; font-weight: bold; margin-top: 5px; font-size: 1.1rem; letter-spacing: 1px; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+
+        /* Divider & Floral Box Styles */
+        .divider { margin: 35px 0 15px; color: #D4AF37; font-size: 1.2rem; letter-spacing: 5px; text-align: center; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+        .doa-box { background-color: rgba(255, 255, 255, 0.85); backdrop-filter: blur(5px); border: 2px solid #E8C9BD; border-radius: 20px; padding: 40px 25px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        .doa-box::before { content: '❁'; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); background: transparent; padding: 0 15px; color: #DDAF9F; font-size: 2rem; line-height: 1; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+        .doa-box::after { content: '❁'; position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); background: transparent; padding: 0 15px; color: #DDAF9F; font-size: 2rem; line-height: 1; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+
+        /* Buttons & Forms */
+        .btn-gold { background-color: #D4AF37; color: #fff; border: none; padding: 12px 30px; font-size: 1rem; border-radius: 30px; cursor: pointer; letter-spacing: 1px; transition: opacity 0.3s; width: 100%; font-family: 'Lora', serif; }
+        .btn-outline { background: rgba(255,255,255,0.8); border: 1px solid #D4AF37; color: #D4AF37; padding: 12px 30px; font-size: 1rem; border-radius: 30px; cursor: pointer; width: 100%; margin-bottom: 10px; font-family: 'Lora', serif; }
+        .btn-text { background: transparent; border: none; color: #888; text-decoration: underline; cursor: pointer; font-size: 0.9rem; margin-top: 15px; width: 100%; font-family: 'Lora', serif; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+        
+        .input-field { width: 100%; padding: 12px 15px; margin-bottom: 15px; border: 1px solid #eaeaea; border-radius: 10px; font-family: inherit; font-size: 0.95rem; background: #fafafa; outline: none; transition: border 0.3s; }
+        .pax-group { display: flex; gap: 10px; }
+        .pax-group > div { flex: 1; }
+        .form-label { display: block; font-size: 0.8rem; color: #666; margin-bottom: 5px; text-align: left; }
+
+        /* Countdown & Scratch */
+        .countdown-wrapper { display: flex; justify-content: center; gap: 12px; margin-top: 20px; }
+        .cd-box { border: 1px solid #8B5A2B; border-radius: 8px; width: 60px; height: 60px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(255,255,255,0.85); backdrop-filter: blur(5px); }
+        .cd-num { font-size: 1.4rem; color: #4A3B32; font-family: 'Playfair Display', serif; }
+        .cd-label { font-size: 0.6rem; color: #8B5A2B; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+        .scratch-wrapper { position: relative; width: 300px; height: 150px; margin: 15px auto 0; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); overflow: hidden; background: #fff; }
+        .scratch-reveal-content { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1; }
+        .scratch-reveal-content h3 { color: #8B5A2B; font-size: 1.8rem; font-family: 'Playfair Display', serif; margin-bottom: 5px; }
+        #scratchCanvas { position: absolute; inset: 0; z-index: 2; cursor: pointer; }
+        .scroll-hint { font-size: 0.8rem; color: #888; animation: bounce 2s infinite; margin-top: 20px; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .aturcara-box { background: rgba(255,255,255,0.85); backdrop-filter: blur(5px); border: 1px solid #eaeaea; border-radius: 15px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .aturcara-item { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px dashed #eaeaea; padding-bottom: 15px; text-align: left; }
+        .aturcara-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .aturcara-time { color: #D4AF37; font-weight: bold; min-width: 85px; text-align: right; }
+        .aturcara-event { color: #555; }
+
+        /* ==========================================================================
+           7. FLOATING UI ELEMENTS (Audio, Close Button, Nav Bar)
+           ========================================================================== */
+        
+        .audio-toggle { position: absolute; bottom: 90px; right: 20px; width: 45px; height: 45px; background: #D4AF37; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; z-index: 250; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: opacity 0.5s ease; opacity: 0; pointer-events: none; }
+        .audio-toggle.is-visible { opacity: 1; pointer-events: auto; }
+
+        .floating-close-btn { position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.9); color: #8B5A2B; border: 1px solid #eaeaea; padding: 8px 15px; border-radius: 20px; font-family: 'Lora', serif; font-size: 0.85rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 250; transition: opacity 0.5s ease; opacity: 0; pointer-events: none; display: flex; align-items: center; gap: 5px; backdrop-filter: blur(5px); }
+        .floating-close-btn.is-visible { opacity: 1; pointer-events: auto; }
+
+        .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background-color: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: 1px solid #eaeaea; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; z-index: 270; transform: translateY(100%); transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bottom-nav.is-visible { transform: translateY(0); } 
+        
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888; font-size: 0.7rem; cursor: pointer; width: 20%; transition: color 0.3s; }
+        .nav-item i { font-size: 1.5rem; margin-bottom: 4px; }
+        .nav-item.active { color: #D4AF37; }
+
+        /* ==========================================================================
+           8. BOTTOM SHEETS (AUTO-HEIGHT, FIXED HEADER, SIDE-BY-SIDE BUTTONS)
+           ========================================================================== */
+        .sheet-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 250; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .sheet-backdrop.is-active { opacity: 1; pointer-events: auto; }
+        
+        .bottom-sheet { 
+            position: absolute; bottom: 70px; left: 0; width: 100%; 
+            height: auto; max-height: 75vh; 
+            background-color: #ffffff; border-radius: 24px 24px 0 0; 
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.1); 
+            
+            /* MAGIK DI SINI: Tukar translateY(120%) kepada translateY(100vh) */
+            transform: translateY(100vh); 
+            
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); 
+            z-index: 260; 
+            display: flex; flex-direction: column; overflow: hidden; 
+        }
+        .bottom-sheet.is-active { transform: translateY(0); }
+        
+        /* HEADER TETAP (FIXED) */
+        .sheet-header-wrapper {
+            position: relative; padding: 25px 20px 15px; background: #fff;
+            border-bottom: 1px solid #eaeaea; flex-shrink: 0; z-index: 2;
+        }
+        .sheet-header { text-align: center; font-size: 1.2rem; color: #333; font-family: 'Playfair Display', serif; font-weight: bold; margin: 0; }
+        .btn-close-sheet { position: absolute; top: 20px; right: 20px; background: #f4f0ec; border: none; width: 30px; height: 30px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #555; cursor: pointer; font-size: 1.2rem; transition: background 0.2s; }
+        
+        /* CONTENT BOLEH SCROLL */
+        .sheet-content {
+            padding: 20px; overflow-y: auto; flex: 1;
+        }
+
+        /* SUSUNAN BUTANG SEBELAH-MENYEBELAH */
+        .btn-flex-row { display: flex; gap: 10px; width: 100%; margin-top: 15px;}
+        .btn-flex-row > * { flex: 1; margin-bottom: 0 !important; display: flex; justify-content: center; align-items: center; text-align: center; }
+
+        .success-state { text-align: center; padding-top: 10px; }
+        .success-state i { font-size: 4rem; color: #4CAF50; margin-bottom: 15px; }
+
+        /* Kekalkan gaya Kalendar */
+        .mini-calendar { background: #fafafa; border: 1px solid #eaeaea; border-radius: 15px; padding: 20px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+        .cal-header { font-family: 'Playfair Display', serif; font-weight: bold; color: #4A3B32; margin-bottom: 15px; font-size: 1.2rem; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; text-align: center; font-size: 0.85rem; }
+        .cal-day { color: #888; font-weight: bold; font-size: 0.75rem; border-bottom: 1px solid #eaeaea; padding-bottom: 5px; }
+        .cal-date { color: #555; padding: 6px 0; border-radius: 50%; transition: all 0.3s; }
+        .cal-date.active { background: #D4AF37; color: white; font-weight: bold; box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4); transform: scale(1.1); }
+
+        
+        /* Latar Belakang Gelap (Pudar Lembut / Soft Ombre Blend) */
+        .section-darker {
+            /* Magik pudar (fade): Putih (0%) -> Mula Gelap (15%) -> Gelap Penuh (Tengah) -> Mula Putih (85%) -> Putih Penuh (100%) */
+            background: linear-gradient(to bottom, 
+                #FAF8F5 0%, 
+                #F0EAE1 15%, 
+                #F0EAE1 85%, 
+                #FAF8F5 100%
+            );
+            margin: 0;
+            padding-top: 10px; /* Tambah ruang bernafas */
+            padding-bottom: 10px;
+            border: none;
+        }
+
+        /* =============== SEKSYEN PENUTUP & KREDIT (FIXED) =============== */
+        /* 2. FOOTER PREMIUM (Susunan Saiz Baru & Bintang Pengantara) */
+        /* =============== SEKSYEN PENUTUP & KREDIT =============== */
+        .section-footer {
+            /* Potong warna putih ke warna dark gold ngam-ngam pada 12px (tengah-tengah bintang) */
+            background: linear-gradient(to bottom, #FAF8F5 0%, #FAF8F5 12px, #A38A6A 12px, #A38A6A 100%);
+            padding: 0 20px 90px; 
+            text-align: center;
+            border: none;
+        }
+
+        /* Kelas baru khas untuk 5 bintang emas */
+        .footer-stars {
+            color: #D4AF37; /* Warna Gold */
+            font-size: 1.2rem;
+            letter-spacing: 6px;
+            margin: 0 auto 25px;
+            line-height: 24px; /* Ketinggian 24px, dipotong pada 12px (separuh) */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .footer-names-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .footer-name {
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.35rem; /* NAMA DIKECILKAN LAGI */
+            color: #FAF8F5; 
+        }
+
+        .footer-rings-image {
+            width: 150px; /* CINCIN DIBESARKAN LAGI supaya sangat menonjol */
+            height: auto;
+            object-fit: contain;
+            opacity: 0.95;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+        }
+
+        .footer-credit {
+            font-size: 0.6rem; 
+            color: rgba(250, 248, 245, 0.85); 
+            font-family: 'Lora', serif;
+            letter-spacing: 2px; 
+            line-height: 1.8;
+            text-transform: uppercase; 
+            margin: 0;
+        }
+        
+        .footer-credit-sub {
+            display: block;
+            font-size: 0.55rem;
+            letter-spacing: 1px;
+            margin-top: 3px;
+            color: rgba(250, 248, 245, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div id="preloader">
+        <div class="spinner-ring"></div>
+        <p class="loading-text">Memuatkan memori indah...</p>
+    </div>
+    <div class="app-frame" x-data="appData()">
+
+        <audio x-ref="bgMusic" loop>
+            <source src="musics\Beautiful In White.mp3" type="audio/mpeg">
+        </audio>
+        <audio x-ref="cheerSound">
+            <source src="https://assets.mixkit.co/active_storage/sfx/2003/2003-preview.mp3" type="audio/mpeg">
+        </audio>
+
+        <div class="bg-layer-gazebo" :class="{ 'is-fading-in-bg': animState === 'opening', 'is-reversing-gazebo': animState === 'closing', 'is-finished': introFinished }"></div>
+        <div class="bg-layer-archway" :class="{ 'is-zooming-bg': animState === 'opening', 'is-reversing-archway': animState === 'closing', 'is-finished': introFinished }"></div>
+        
+        <div id="petal-container"></div>
+
+        <div class="intro-screen" :class="introFinished ? 'is-finished' : ''">
+            <div class="drop-wrapper">
+                <div class="float-wrapper">
+                    <div class="envelope-wrapper" :class="{ 'is-opening': animState === 'opening', 'is-closing': animState === 'closing' }">
+                        
+                        <div class="env-back"></div>
+                        
+                        <div class="env-letter">
+                            <div class="letter-top"><div class="dummy-text-gold">﷽</div></div>
+                            <div class="dummy-text-name">Nurul</div>
+                            <div class="dummy-text-amp">&</div>
+                            <div class="dummy-text-name">Faizatul</div>
+                            <div class="letter-bottom">
+                                <div class="blur-wrapper">
+                                    <div class="blur-line" style="width: 80%; height: 8px; margin-bottom: 15px;"></div>
+                                    <div class="blur-line" style="width: 90%; height: 8px; margin-bottom: 15px;"></div>
+                                    <div class="blur-line" style="width: 75%; height: 8px; margin-bottom: 15px;"></div>
+                                    <div class="blur-line" style="width: 50%; height: 8px; margin-bottom: 25px;"></div>
+                                    <div class="blur-line" style="width: 30%; height: 6px;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="env-front-group">
+                            <div class="flap-texture env-flap-left"></div>
+                            <div class="flap-texture env-flap-right"></div>
+                            <div class="flap-texture env-flap-bottom"></div>
+                            <div class="static-lines"></div>
+                        </div>
+                        
+                        <div class="env-top">
+                            <div class="flap-texture env-top-clip"></div>
+                            <div class="moving-lines"></div>
+                        </div>
+                        
+                        <div class="env-seal" @click="openKad()"></div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="story-container" :class="introFinished ? 'is-revealed' : ''" x-ref="storyScroll">
+            
+            <div class="gazebo-header-bg"></div>
+
+            <div class="story-section" style="min-height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                
+                <div class="vellum-card">
+                    
+                    <p style="color: #D4AF37; font-size: 1.8rem; margin-bottom: 20px; font-family: 'Amiri', 'Playfair Display', serif; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</p>
+                    
+                    <p class="story-text" style="font-size: 0.85rem; font-style: italic; margin-bottom: 25px;">
+                        "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu bersenang hati dan hidup mesra dengannya..."<br>
+                        <span style="font-size: 0.75rem;">(Surah Ar-Rum 30:21)</span>
+                    </p>
+
+                    <p class="story-text" style="margin-bottom: 5px;">Dengan Izin Allah, kami,</p>
+                    
+                    <div class="bride-groom-name">Faizatul Fitri</div>
+                    <div style="color: #D4AF37; font-size: 2rem; font-style: italic; font-family: 'Playfair Display', serif; margin: -5px 0; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">&</div>
+                    <div class="bride-groom-name">Nurul Batrisyia</div>
+                    
+                    <p class="story-text" style="font-size: 0.85rem; padding: 0 5px; line-height: 1.6; margin-top: 25px; margin-bottom: 0;">
+                        dengan hormatnya menjemput anda untuk meraikan bersama kami hari yang paling istimewa dalam hidup kami.
+                    </p>
+
+                </div>
+                <div class="divider" style="margin-top: 25px; margin-bottom: 10px;">✦ ✧ ✦</div>
+
+                <div x-show="!isScratched" class="scroll-hint">
+                    Sila scroll ke bawah <i class="ph ph-caret-down"></i>
+                </div>
+            </div>
+
+            <div class="story-section" style="padding-top: 20px; display: flex; flex-direction: column; justify-content: center;">
+                <h2 class="story-title" style="font-size: 3rem; margin-bottom: 5px;">Reveal</h2>
+                <div x-show="!isScratched" style="color: #8B5A2B; font-weight: bold; font-size: 0.9rem; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">
+                    Sapu kotak di bawah untuk melihat tarikh! <i class="ph ph-hand-swipe-down"></i>
+                </div>
+
+                <div class="scratch-wrapper">
+                    <div class="scratch-reveal-content">
+                        <h3>26 Jun 2026</h3>
+                        <p style="color: #555; font-size: 0.9rem;">Jumaat (Selepas Asar)</p>
+                        <p style="font-size: 0.7rem; color: #888; margin-top: 5px;">Waktu mustajab doa</p>
+                    </div>
+                    <canvas id="scratchCanvas"></canvas>
+                </div>
+                
+                <div x-show="isScratched" style="display: none; margin-top: 20px; animation: fadeIn 1s ease-in;">
+                    <p style="font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: #4A3B32; text-shadow: 0 2px 4px rgba(255,255,255,0.8);">We're getting married!</p>
+                    <div class="hashtag">#FAInallywithNurul</div>
+                    <div class="scroll-hint">Scroll ke bawah <i class="ph ph-caret-down"></i></div>
+                </div>
+            </div>
+
+            <div x-show="isScratched" style="display: none;" x-transition.opacity.duration.1000ms>
+                
+                <div class="story-section" x-data="countdownTimer()" x-init="start()" style="padding-bottom: 0;">
+                    <h2 class="story-title">Menanti Hari</h2>
+                    <div class="countdown-wrapper">
+                        <div class="cd-box"><span class="cd-num" x-text="days">00</span><span class="cd-label">Hari</span></div>
+                        <div class="cd-box"><span class="cd-num" x-text="hours">00</span><span class="cd-label">Jam</span></div>
+                        <div class="cd-box"><span class="cd-num" x-text="minutes">00</span><span class="cd-label">Minit</span></div>
+                        <div class="cd-box"><span class="cd-num" x-text="seconds">00</span><span class="cd-label">Saat</span></div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: #8B5A2B; margin-top: 15px; margin-bottom: 25px; font-style: italic;">menjelang hari bahagia</p>
+                </div>
+
+                <div class="story-section section-darker">
+                    
+                    <div class="divider" style="margin-top: 0; margin-bottom: 25px;">✦ ✧ ✦</div>
+
+                    <p style="font-size: 0.85rem; letter-spacing: 1px; color: #888; text-transform: uppercase;">Majlis akan berlangsung di</p>
+                    
+                    <img src="images/masjid.webp" style="width: 100%; max-width: 350px; margin: 10px auto 20px; display: block; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.06));" alt="Lukisan Masjid Al-Abyad">                    
+                    <h2 class="story-title" style="margin-top: 10px; font-size: 2.5rem;">Masjid Al-Abyad</h2>
+                    <p class="story-text" style="font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px;">Taman Matang Jaya, Kuching</p>
+                    <p class="story-text" style="font-size: 0.9rem; font-weight: bold; color: #D4AF37;">26 Jun 2026</p>
+                    
+                    <div class="divider" style="margin-top: 25px; margin-bottom: 0;">✦ ✧ ✦</div>
+
+                </div>
+                
+                <div class="story-section">
+                    <h2 class="story-title">Aturcara Majlis</h2>
+                    <p style="font-size: 0.85rem; color: #888; margin-bottom: 15px; font-style: italic; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">Sila datang menepati waktu.</p>
+                    <div class="aturcara-box">
+                        <div class="aturcara-item">
+                            <span class="aturcara-event">Ketibaan Tetamu & Ahli Keluarga</span>
+                            <span class="aturcara-time">4:00 Petang</span>
+                        </div>
+                        <div class="aturcara-item">
+                            <span class="aturcara-event">Majlis Akad Nikah Berlangsung</span>
+                            <span class="aturcara-time">4:30 Petang</span>
+                        </div>
+                        <div class="aturcara-item">
+                            <span class="aturcara-event">Sesi Bergambar & Jamuan Makan</span>
+                            <span class="aturcara-time">6:00 Petang</span>
+                        </div>
+                        <div class="aturcara-item">
+                            <span class="aturcara-event">Majlis Bersurai</span>
+                            <span class="aturcara-time">7:00 Malam</span>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="story-section section-darker">
+                    
+                    <div class="divider" style="margin-top: 0; margin-bottom: 25px;">✦ ✧ ✦</div>
+
+                    <h2 class="story-title">Tema Pakaian</h2>
+                    
+                    <img src="images/dresscode.webp" style="width: 100%; max-width: 250px; margin: 10px auto 20px; display: block; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.06));" alt="Tema Pakaian Pastel">
+                    
+                    <p class="story-text" style="font-size: 0.9rem; line-height: 1.6;">Kami menjemput anda untuk berpakaian elegan dan formal untuk meraikan hari istimewa ini bersama kami.</p>
+                    
+                    <p style="font-size: 1.5rem; color: #8B5A2B; font-family: 'Playfair Display', serif; margin: 20px 0 5px;">Pakaian Bersesuaian</p>
+                    <p style="font-size: 1.1rem; color: #4A3B32; font-family: 'Lora', serif; font-style: italic;">Sila elakkan memakai warna putih</p>
+                    <p style="font-size: 0.9rem; color: #888; margin-top: 5px;">Warna pastel digalakkan (Kecuali Pink & Hijau)</p>
+                    
+                    <div class="divider" style="margin-top: 25px; margin-bottom: 0;">✦ ✧ ✦</div>
+
+                </div>
+
+                <div class="story-section" x-init="fetchMessages()">
+                    <h2 class="story-title" style="margin-bottom: 5px;">Ucapan Tetamu</h2>
+                    <p style="font-size: 0.85rem; color: #888; margin-bottom: 20px; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">Doa dan titipan kata dari anda</p>
+                    
+                    <div x-show="isLoadingMessages" style="color: #D4AF37; font-size: 0.9rem; margin: 20px 0; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">
+                        <i class="ph ph-spinner ph-spin" style="font-size: 1.5rem; vertical-align: middle;"></i> Memuat turun ucapan...
+                    </div>
+
+                    <div x-show="!isLoadingMessages" style="max-height: 300px; overflow-y: auto; text-align: left; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.85); backdrop-filter: blur(5px); border: 1px solid #eaeaea; display: none; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);">
+                        <div x-show="messages.length === 0" style="text-align: center; color: #888; font-size: 0.9rem; padding: 20px 0;">
+                            Belum ada ucapan. Jadilah yang pertama!
+                        </div>
+                        <template x-for="msg in messages">
+                            <div style="background: rgba(250,250,250,0.9); padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #f0f0f0;">
+                                <p style="font-weight: bold; color: #4A3B32; font-size: 0.9rem; margin-bottom: 5px; font-family: 'Playfair Display', serif;" x-text="msg.name"></p>
+                                <p style="color: #666; font-size: 0.85rem; line-height: 1.5;" x-text="msg.message"></p>
+                            </div>
+                        </template>
+                    </div>
+                    
+                </div>
+
+                <div class="story-section section-darker" style="padding-bottom: 20px;">
+                    <div class="divider" style="margin-top: 0; margin-bottom: 25px;">✦ ✧ ✦</div>
+
+                    <h2 class="story-title" style="margin-bottom: 25px;">Doa & Harapan</h2>
+                    
+                    <div class="doa-box">
+                        <p class="story-text" style="font-style: italic; line-height: 1.8; margin: 0; color: #666;">
+                            "Semoga mahligai yang dibina sentiasa dilimpahi kebahagiaan, ketenangan, dan mekar dengan kasih sayang yang berpanjangan. Mohon titipkan doa yang baik-baik buat kami berdua."
+                        </p>
+                    </div>
+
+                    </div>
+                
+                <div class="divider" style="margin-top: 0; margin-bottom: 0;">✦ ✧ ✦</div>
+
+                <div class="section-footer">
+                    
+                    <div class="footer-stars">✦ ✦ ✦ ✦ ✦</div>
+                    
+                    <div class="footer-names-container">
+                        <span class="footer-name">Faizatul</span>
+                        
+                        <img src="images/rings.webp" class="footer-rings-image" alt="Rings">
+                        
+                        <span class="footer-name">Nurul</span>
+                    </div>
+
+                    <p class="footer-credit">
+                        Made with love by Faizatul Fitri
+                        <span class="footer-credit-sub">For his love to Nurul Batrisyia</span>
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+        <button class="floating-close-btn" :class="introFinished ? 'is-visible' : ''" @click="closeKad()">
+            <i class="ph ph-x"></i> Tutup
+        </button>
+
+        <div class="audio-toggle" :class="introFinished ? 'is-visible' : ''" @click="toggleAudio()">
+            <i class="ph" :class="isPlaying ? 'ph-speaker-high' : 'ph-speaker-slash'"></i>
+        </div>
+
+        <div class="sheet-backdrop" :class="activeSheet !== null ? 'is-active' : ''" @click="activeSheet = null"></div>
+
+        <div class="bottom-sheet" :class="activeSheet === 'rsvp' ? 'is-active' : ''">
+            <div class="sheet-header-wrapper">
+                <button class="btn-close-sheet" @click="activeSheet = null"><i class="ph ph-x"></i></button>
+                <div class="sheet-header">Pengesahan Hadir (RSVP)</div>
+            </div>
+            
+            <div class="sheet-content">
+                <div x-show="submitSuccess" class="success-state" style="display: none;">
+                    <i class="ph ph-check-circle"></i>
+                    <h3 style="margin-bottom: 10px; font-family: 'Playfair Display', serif;">Terima Kasih!</h3>
+                    <p style="color: #666; margin-bottom: 20px;">Maklum balas anda telah disimpan.</p>
+                    <button class="btn-gold" @click="activeSheet = null">Tutup</button>
+                </div>
+
+                <div x-show="!submitSuccess">
+                    <div x-show="!rsvpStatus">
+                        <p style="text-align: center; color: #666; margin-bottom: 10px;">Sila sahkan kehadiran anda ke majlis kami.</p>
+                        <div class="btn-flex-row">
+                            <button type="button" class="btn-outline" style="background: #fff;" @click="rsvpStatus = 'Hadir'">Hadir</button>
+                            <button type="button" class="btn-outline" style="background: #fff;" @click="rsvpStatus = 'Tidak Hadir'">Tidak Hadir</button>
+                        </div>
+                    </div>
+
+                    <form x-show="rsvpStatus" @submit.prevent="submitRSVP()" style="display: none;">
+                        <p style="text-align: center; margin-bottom: 15px; font-size: 0.9rem;">Status: <strong style="color:#D4AF37;" x-text="rsvpStatus"></strong></p>
+                        <input type="text" x-model="form.name" class="input-field" placeholder="Nama Penuh" required>
+                        <input type="tel" x-model="form.phone" class="input-field" placeholder="No. Telefon" required>
+                        <div x-show="rsvpStatus === 'Hadir'" class="pax-group">
+                            <div><label class="form-label">Dewasa</label><input type="number" x-model="form.adults" class="input-field" min="1" placeholder="0"></div>
+                            <div><label class="form-label">Kanak-kanak</label><input type="number" x-model="form.children" class="input-field" min="0" placeholder="0"></div>
+                        </div>
+                        <input type="text" x-model="form.message" class="input-field" placeholder="Ucapan (Pilihan)">
+                        <button type="submit" class="btn-gold" :disabled="isSubmitting" style="margin-bottom: 10px;"><span x-text="isSubmitting ? 'Menghantar...' : 'Hantar RSVP'"></span></button>
+                        <button type="button" class="btn-text" style="text-shadow: none; margin-top: 5px;" @click="rsvpStatus = null">Kembali</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-sheet" :class="activeSheet === 'gift' ? 'is-active' : ''">
+            <div class="sheet-header-wrapper">
+                <button class="btn-close-sheet" @click="activeSheet = null"><i class="ph ph-x"></i></button>
+                <div class="sheet-header">Salam Kaup</div>
+            </div>
+            
+            <div class="sheet-content" style="text-align: center;">
+                <p style="color: #666; margin-bottom: 20px; font-size: 0.9rem; line-height: 1.6;">Your presence is the best gift we could receive. However, if you wish to contribute to our new life together, you can do so via bank transfer.</p>
+                
+                <div style="background: #fafafa; border: 1px solid #eaeaea; padding: 20px; border-radius: 15px;">
+                    <img src="images/qrcode.png" alt="QR Code Bank Islam" style="width: 150px; height: 150px; margin-bottom: 15px; border-radius: 10px;">
+                    <h3 style="color: #333; font-family: 'Playfair Display', serif; margin-bottom: 5px;">Bank Islam</h3>
+                    <p style="font-size: 1.2rem; font-weight: bold; letter-spacing: 2px; margin-bottom: 5px;">1622 3344 5566</p>
+                    <p style="color: #888; font-size: 0.8rem; margin-bottom: 5px;">Faizatul Fitri</p>
+                    
+                    <div class="btn-flex-row">
+                        <button class="btn-outline" style="background:#fff; font-size: 0.85rem;" @click="navigator.clipboard.writeText('162233445566'); alert('Nombor akaun berjaya disalin!')">
+                            <i class="ph ph-copy" style="margin-right: 5px;"></i> Salin
+                        </button>
+                        <a href="images/qrcode.webp" download="QR_Faizatul.jpg" class="btn-outline" style="background:#fff; font-size: 0.85rem; text-decoration: none;">
+                            <i class="ph ph-download-simple" style="margin-right: 5px;"></i> Muat Turun
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-sheet" :class="activeSheet === 'contact' ? 'is-active' : ''">
+            <div class="sheet-header-wrapper">
+                <button class="btn-close-sheet" @click="activeSheet = null"><i class="ph ph-x"></i></button>
+                <div class="sheet-header">Hubungi Kami</div>
+            </div>
+            
+            <div class="sheet-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #eaeaea; border-radius: 15px; margin-bottom: 15px;">
+                    <div><h4 style="color: #333; font-family: 'Playfair Display', serif;">Faizatul Fitri</h4><p style="color: #888; font-size: 0.8rem;">Pengantin Lelaki</p></div>
+                    <div style="display: flex; gap: 10px;">
+                        <a href="tel:+60128720170" style="background: #f4f0ec; color: #D4AF37; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-phone"></i></a>
+                        <a href="https://wa.me/60128720170" target="_blank" style="background: #25D366; color: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-whatsapp-logo"></i></a>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #eaeaea; border-radius: 15px;">
+                    <div><h4 style="color: #333; font-family: 'Playfair Display', serif;">Nurul Batrisyia</h4><p style="color: #888; font-size: 0.8rem;">Pengantin Perempuan</p></div>
+                    <div style="display: flex; gap: 10px;">
+                        <a href="tel:+60173541310" style="background: #f4f0ec; color: #D4AF37; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-phone"></i></a>
+                        <a href="https://wa.me/60173541310" target="_blank" style="background: #25D366; color: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-whatsapp-logo"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-sheet" :class="activeSheet === 'location' ? 'is-active' : ''">
+            <div class="sheet-header-wrapper">
+                <button class="btn-close-sheet" @click="activeSheet = null"><i class="ph ph-x"></i></button>
+                <div class="sheet-header">Lokasi Majlis</div>
+            </div>
+            
+            <div class="sheet-content">
+                <img src="images/masjid2.webp" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" alt="Peta Masjid">
+                <h3 style="color: #333; font-family: 'Playfair Display', serif; margin-bottom: 5px; text-align: center;">Masjid Al-Abyad</h3>
+                <p style="color: #666; font-size: 0.9rem; text-align: center;">Jln Matang Jaya, Taman Matang Jaya, Kuching, Sarawak</p>
+                
+                <div class="btn-flex-row">
+                    <a href="https://maps.app.goo.gl/D9oXZfg166U2ehAWA" target="_blank" class="btn-outline" style="background:#fff; text-decoration: none;"><i class="ph ph-google-logo" style="margin-right: 5px;"></i> Google Maps</a>
+                    <a href="https://ul.waze.com/ul?place=ChIJkbsL09oH-zER-h3j5DT06HQ&ll=1.58037330%2C110.29830990&navigate=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location" target="_blank" class="btn-outline" style="background:#fff; text-decoration: none;"><i class="ph ph-navigation-arrow" style="margin-right: 5px;"></i> Waze</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-sheet" :class="activeSheet === 'calendar' ? 'is-active' : ''">
+            <div class="sheet-header-wrapper">
+                <button class="btn-close-sheet" @click="activeSheet = null"><i class="ph ph-x"></i></button>
+                <div class="sheet-header">Simpan Tarikh</div>
+            </div>
+            
+            <div class="sheet-content">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h1 style="color: #D4AF37; font-size: 4rem; line-height: 1; font-family: 'Playfair Display', serif;">26</h1>
+                    <h3 style="color: #333; text-transform: uppercase; letter-spacing: 2px;">Jun 2026</h3>
+                    <p style="color: #888; margin-top: 5px; font-size: 0.9rem;">Jumaat • Selepas Asar</p>
+                </div>
+
+                <div class="mini-calendar">
+                    <div class="cal-header">Jun 2026</div>
+                    <div class="cal-grid">
+                        <div class="cal-day">A</div><div class="cal-day">I</div><div class="cal-day">S</div><div class="cal-day">R</div><div class="cal-day">K</div><div class="cal-day">J</div><div class="cal-day">S</div>
+                        <div class="cal-date"></div><div class="cal-date">1</div><div class="cal-date">2</div><div class="cal-date">3</div><div class="cal-date">4</div><div class="cal-date">5</div><div class="cal-date">6</div>
+                        <div class="cal-date">7</div><div class="cal-date">8</div><div class="cal-date">9</div><div class="cal-date">10</div><div class="cal-date">11</div><div class="cal-date">12</div><div class="cal-date">13</div>
+                        <div class="cal-date">14</div><div class="cal-date">15</div><div class="cal-date">16</div><div class="cal-date">17</div><div class="cal-date">18</div><div class="cal-date">19</div><div class="cal-date">20</div>
+                        <div class="cal-date">21</div><div class="cal-date">22</div><div class="cal-date">23</div><div class="cal-date">24</div><div class="cal-date">25</div><div class="cal-date active">26</div><div class="cal-date">27</div>
+                        <div class="cal-date">28</div><div class="cal-date">29</div><div class="cal-date">30</div><div class="cal-date"></div><div class="cal-date"></div><div class="cal-date"></div><div class="cal-date"></div>
+                    </div>
+                </div>
+
+                <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Walimatul+Urus+Nurul+%26+Faizatul&dates=20260626T080000Z/20260626T140000Z&details=Sila+hadir+memeriahkan+majlis+kami.&location=Masjid+Al-Abyad,+Matang,+Kuching" target="_blank" class="btn-gold" style="display: block; text-align: center; text-decoration: none; width: 100%; margin-top: 10px;"><i class="ph ph-calendar-plus" style="vertical-align: middle;"></i> Tambah ke Google Calendar</a>
+            </div>
+        </div>
+        
+        <div class="bottom-nav" :class="(introFinished && isScratched) ? 'is-visible' : ''">
+            <div class="nav-item" :class="activeSheet === 'rsvp' ? 'active' : ''" @click="toggleSheet('rsvp')"><i class="ph ph-envelope-open"></i><span>RSVP</span></div>
+            <div class="nav-item" :class="activeSheet === 'gift' ? 'active' : ''" @click="toggleSheet('gift')"><i class="ph ph-gift"></i><span>Hadiah</span></div>
+            <div class="nav-item" :class="activeSheet === 'contact' ? 'active' : ''" @click="toggleSheet('contact')"><i class="ph ph-phone"></i><span>Hubungi</span></div>
+            <div class="nav-item" :class="activeSheet === 'location' ? 'active' : ''" @click="toggleSheet('location')"><i class="ph ph-map-pin"></i><span>Lokasi</span></div>
+            <div class="nav-item" :class="activeSheet === 'calendar' ? 'active' : ''" @click="toggleSheet('calendar')"><i class="ph ph-calendar-plus"></i><span>Kalendar</span></div>
+        </div>
+
+    </div>
+
+    <script>
+
+        // ==========================================
+        // FUNGSI: TUTUP SKRIN LOADING BILA SEMUA DAH BERSEDIA
+        // ==========================================
+        window.addEventListener('load', function() {
+            // 'load' bermaksud ia akan tunggu semua imej, audio & fail siap didownload sepenuhnya
+            const preloader = document.getElementById('preloader');
+            
+            // Tambah sedikit delay (contoh 0.5 saat) supaya tak terlalu mendadak hilangnya
+            setTimeout(() => {
+                preloader.classList.add('is-hidden');
+            }, 500);
+        });
+
+        // FUNCTION 1: WHIMSICAL PETAL RAIN
+        function createWhimsicalRain() {
+            const container = document.getElementById('petal-container');
+            if (!container) return; 
+            
+            const pastelColors = ['#A1C9F1', '#FFF5BA', '#A8E6CF', '#D7BCE8', '#FFD1DC'];
+            const petalCount = 75; 
+
+            for (let i = 0; i < petalCount; i++) {
+                let petal = document.createElement('div');
+                petal.classList.add('petal');
+                
+                let color = pastelColors[Math.floor(Math.random() * pastelColors.length)];
+                petal.style.backgroundColor = color;
+                
+                let size = Math.random() * 8 + 8; 
+                petal.style.width = `${size}px`;
+                petal.style.height = `${size}px`;
+                
+                let startX = Math.random() * 150; 
+                petal.style.left = `${startX}vw`;
+                
+                let duration = Math.random() * 7 + 7; 
+                petal.style.animationDuration = `${duration}s`;
+                
+                let delay = Math.random() * -15; 
+                petal.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(petal);
+            }
+        }
+        // MAGIK DI SINI: Kita 'delay' 2.5 saat sebelum bunga mula dicipta
+        // Jadi fon tak 'tercekik' masa mula-mula buka link
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(createWhimsicalRain, 500); 
+        });
+
+        // FUNCTION 2: COUNTDOWN TIMER
+        function countdownTimer() {
+            return {
+                days: '00', hours: '00', minutes: '00', seconds: '00',
+                start() {
+                    const countDownDate = new Date("Jun 26, 2026 16:30:00").getTime();
+                    setInterval(() => {
+                        const distance = countDownDate - new Date().getTime();
+                        if (distance < 0) return;
+                        this.days = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                        this.hours = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                        this.minutes = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                        this.seconds = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+                    }, 1000);
+                }
+            }
+        }
+
+        // FUNCTION 3: MAIN APP DATA (Merged Logics)
+        function appData() {
+            return {
+                animState: 'idle',
+                introFinished: false,
+                activeSheet: null,
+                isPlaying: false,
+                isScratched: false,
+                messages: [],
+                isLoadingMessages: true, 
+                
+                rsvpStatus: null,
+                isSubmitting: false,
+                submitSuccess: false,
+                form: { name: '', phone: '', adults: '', children: '', message: '' },
+
+                openKad() { 
+                    if (this.animState !== 'idle') return; 
+                    
+                    this.animState = 'opening'; 
+                    this.playAudio(); 
+                    
+                    // Timing set to 3800ms matching the new cinematic animation
+                    setTimeout(() => {
+                        this.introFinished = true;
+                        if (!this.isScratched) {
+                            setTimeout(() => initScratchCard(this), 100); 
+                        }
+                    }, 3800); 
+                },
+
+                closeKad() {
+                    this.pauseAudio();
+                    this.activeSheet = null;
+                    this.$refs.storyScroll.scrollTop = 0;
+                    
+                    this.introFinished = false; 
+                    this.animState = 'closing';
+                    
+                    // Timing set to 3000ms for closing sequence
+                    setTimeout(() => {
+                        this.animState = 'idle';
+                    }, 3000);
+                },
+
+                toggleSheet(sheetName) { this.activeSheet = this.activeSheet === sheetName ? null : sheetName; },
+                toggleAudio() { this.isPlaying ? this.pauseAudio() : this.playAudio(); },
+                playAudio() { this.$refs.bgMusic.play(); this.isPlaying = true; },
+                pauseAudio() { this.$refs.bgMusic.pause(); this.isPlaying = false; },
+
+                revealDate() {
+                    if (this.isScratched) return;
+                    this.isScratched = true;
+                    this.$refs.cheerSound.play();
+                    
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#D4AF37', '#8B5A2B', '#FFFFFF']
+                    });
+                },
+
+                fetchMessages() {
+                    const googleUrl = 'https://script.google.com/macros/s/AKfycbzDZttIC0pf3bBlPvlCtAEwmVP9Kwnvu9-4scxF2CbDyIkeovxXsY-_GIytcruMBq5Pyg/exec';
+                    
+                    fetch(googleUrl)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.result === 'success') {
+                                this.messages = data.data;
+                            }
+                            this.isLoadingMessages = false;
+                        })
+                        .catch(error => {
+                            console.error("Error fetching messages:", error);
+                            this.isLoadingMessages = false;
+                        });
+                },
+
+                submitRSVP() {
+                    this.isSubmitting = true;
+                    const newName = this.form.name;
+                    const newMessage = this.form.message;
+                    
+                    const payload = {
+                        name: this.form.name, phone: this.form.phone, attendance: this.rsvpStatus,
+                        adults: this.rsvpStatus === 'Hadir' ? this.form.adults : '0',
+                        children: this.rsvpStatus === 'Hadir' ? this.form.children : '0',
+                        message: this.form.message
+                    };
+
+                    const googleUrl = 'https://script.google.com/macros/s/AKfycbzDZttIC0pf3bBlPvlCtAEwmVP9Kwnvu9-4scxF2CbDyIkeovxXsY-_GIytcruMBq5Pyg/exec';
+
+                    fetch(googleUrl, {
+                        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                    })
+                    .then(() => {
+                        this.isSubmitting = false;
+                        this.submitSuccess = true;
+                        
+                        if (newMessage && newMessage.trim() !== '') {
+                            this.messages.unshift({ name: newName, message: newMessage });
+                        }
+                        
+                        this.form = { name: '', phone: '', adults: '', children: '', message: '' }; 
+                    })
+                    .catch(error => {
+                        alert("Ralat semasa menghantar. Sila cuba lagi.");
+                        this.isSubmitting = false;
+                    });
+                }
+            }
+        }
+
+        // FUNCTION 4: SCRATCH CARD LOGIC
+        function initScratchCard(appContext) {
+            const canvas = document.getElementById('scratchCanvas');
+            if (!canvas) return;
+            
+            if (appContext.isScratched) {
+                canvas.style.display = 'none';
+                return;
+            } else {
+                canvas.style.display = 'block'; 
+            }
+
+            const ctx = canvas.getContext('2d', { willReadFrequently: true });
+            canvas.width = 300; canvas.height = 150;
+            
+            const gradient = ctx.createLinearGradient(0, 0, 300, 150);
+            gradient.addColorStop(0, "#D4AF37"); gradient.addColorStop(1, "#8B5A2B"); 
+            ctx.fillStyle = gradient; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = "#ffffff"; ctx.font = "bold 20px 'Playfair Display'"; ctx.textAlign = "center"; ctx.fillText("Teka Tarikh", 150, 80);
+
+            let isDrawing = false;
+
+            function getMousePos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return { x: clientX - rect.left, y: clientY - rect.top };
+            }
+
+            function scratch(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+                const pos = getMousePos(e);
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath(); ctx.arc(pos.x, pos.y, 25, 0, Math.PI * 2); ctx.fill();
+                checkReveal();
+            }
+
+            function checkReveal() {
+                if (appContext.isScratched) return;
+                const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                let transparentPixels = 0;
+                for (let i = 3; i < pixels.length; i += 4) { if (pixels[i] === 0) transparentPixels++; }
+                
+                if ((transparentPixels / (pixels.length / 4)) * 100 > 60) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    canvas.style.display = 'none'; 
+                    appContext.revealDate();
+                }
+            }
+
+            canvas.addEventListener('mousedown', (e) => { isDrawing = true; scratch(e); });
+            canvas.addEventListener('mousemove', scratch);
+            canvas.addEventListener('mouseup', () => { isDrawing = false; });
+            canvas.addEventListener('mouseleave', () => { isDrawing = false; });
+            canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); }, { passive: false });
+            canvas.addEventListener('touchmove', scratch, { passive: false });
+            canvas.addEventListener('touchend', () => { isDrawing = false; });
+        }
+    </script>
+</body>
+</html>
