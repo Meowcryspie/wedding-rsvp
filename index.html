@@ -395,10 +395,28 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .aturcara-box { background: rgba(255,255,255,0.85); backdrop-filter: blur(5px); border: 1px solid #eaeaea; border-radius: 15px; padding: 20px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-        .aturcara-item { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px dashed #eaeaea; padding-bottom: 15px; text-align: left; }
+        .aturcara-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; /* Pastikan teks kiri & kanan selari di tengah */
+            gap: 15px; /* Jarak selamat antara acara dan masa */
+            margin-bottom: 15px; 
+            border-bottom: 1px dashed #eaeaea; 
+            padding-bottom: 15px; 
+            text-align: left; 
+        }
         .aturcara-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .aturcara-time { color: #D4AF37; font-weight: bold; min-width: 85px; text-align: right; }
-        .aturcara-event { color: #555; }
+        .aturcara-time { 
+            color: #D4AF37; 
+            font-weight: bold; 
+            white-space: nowrap; /* PAKSA masa kekal 1 baris, takkan patah! */
+            text-align: right; 
+        }
+        .aturcara-event { 
+            color: #555; 
+            flex: 1; /* Benarkan teks acara ambil ruang selebihnya */
+            line-height: 1.4; /* Jarak baris yang lebih kemas kalau ayat panjang */
+        }
 
         /* ==========================================================================
            7. FLOATING UI ELEMENTS (Audio, Close Button, Nav Bar)
