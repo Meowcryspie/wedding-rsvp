@@ -59,8 +59,7 @@
         /* Kita hanya paksa GPU render imej besar di belakang supaya fon tak lag. 
            JANGAN letak pada elemen sampul (envelope) supaya bentuk lipatan tak terpotong. */
         .bg-layer-archway, 
-        .bg-layer-gazebo, 
-        .story-container {
+        .bg-layer-gazebo {
             will-change: transform, opacity;
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
@@ -165,7 +164,11 @@
         /* ==========================================================================
            3. STRUKTUR SAMPUL BARU & SEAL TRANSPARENT
            ========================================================================== */
-        .env-back { position: absolute; inset: 0; border-radius: 5px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); z-index: 1; overflow: hidden; background: #656358; }
+        /* Tambah kelas baru ini */
+        .env-shadow { position: absolute; inset: 0; border-radius: 5px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); z-index: 0; }
+        
+        /* Buang box-shadow dari .env-back ini */
+        .env-back { position: absolute; inset: 0; border-radius: 5px; z-index: 1; overflow: hidden; background: #656358; }
         .env-back::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(101, 99, 88, 0.75), rgba(101, 99, 88, 0.75)), url('images/pattern.webp'); background-size: cover; background-position: center; transform: scaleX(-1); }
         .flap-texture { position: absolute; inset: 0; background-image: url('images/pattern.webp'); background-size: cover; background-position: center; border-radius: 5px; }
         .env-front-group { position: absolute; inset: 0; z-index: 4; transform-style: preserve-3d; pointer-events: none; border-radius: 5px; overflow: hidden; }
@@ -222,8 +225,11 @@
         @keyframes topFlapAnim { 0%, 5% { transform: rotateX(0deg) translateX(0); z-index: 5; opacity: 1; } 10% { transform: rotateX(179.9deg) translateX(0); z-index: 5; opacity: 1; } 11% { transform: rotateX(179.9deg) translateX(0); z-index: 2; opacity: 1; } 30% { transform: rotateX(179.9deg) translateX(0); z-index: 2; opacity: 1; } 45%, 100% { transform: rotateX(179.9deg) translateX(-100vw); z-index: 2; opacity: 0; } }
         .is-opening .env-back, .is-opening .env-front-group { animation: shellExit 4.5s ease forwards; }
         @keyframes shellExit { 0%, 30% { transform: translateX(0); opacity: 1; } 45%, 100% { transform: translateX(-100vw); opacity: 0; } }
+        /* Selitkan ini di bawah .is-opening .env-back... */
+        .is-opening .env-shadow { animation: fadeShadowOut 4.5s ease forwards; }
+        @keyframes fadeShadowOut { 0% { opacity: 1; } 10%, 100% { opacity: 0; display: none;} }
         .is-opening .env-letter { animation: letterSlideZoom 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        @keyframes letterSlideZoom { 0%, 15% { transform: translateY(0) scale(1); filter: blur(0px); opacity: 1; } 30%, 40% { transform: translateY(-230px) scale(0.9); filter: blur(0px); opacity: 1; } 55%, 75% { transform: translateY(-30px) scale(1); filter: blur(0px); opacity: 1; } 100% { transform: translateY(50px) scale(4); filter: blur(6px); opacity: 0; } }
+        @keyframes letterSlideZoom { 0%, 15% { transform: translateY(0) scale(1); opacity: 1; } 30%, 40% { transform: translateY(-230px) scale(0.9); opacity: 1; } 55%, 75% { transform: translateY(-30px) scale(1); opacity: 1; } 100% { transform: translateY(50px) scale(4); opacity: 0; } }
 
         .is-closing .env-seal { animation: reverseSeal 3s forwards; }
         @keyframes reverseSeal { 0%, 85% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); pointer-events: none; } 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; } }
@@ -231,9 +237,11 @@
         @keyframes reverseTopFlap { 0%, 45% { transform: rotateX(179.9deg) translateX(-100vw); z-index: 2; opacity: 0; } 60%, 80% { transform: rotateX(179.9deg) translateX(0); z-index: 2; opacity: 1; } 81% { transform: rotateX(179.9deg) translateX(0); z-index: 5; opacity: 1; } 100% { transform: rotateX(0deg) translateX(0); z-index: 5; opacity: 1; } }
         .is-closing .env-back, .is-closing .env-front-group { animation: reverseShellExit 3s ease forwards; }
         @keyframes reverseShellExit { 0%, 45% { transform: translateX(-100vw); opacity: 0; } 60%, 100% { transform: translateX(0); opacity: 1; } }
+        .is-closing .env-shadow { animation: fadeShadowIn 3s ease forwards; }
+        @keyframes fadeShadowIn { 0%, 80% { opacity: 0; } 100% { opacity: 1;} }
         .is-closing .env-letter { animation: reverseLetterSlideZoom 3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        @keyframes reverseLetterSlideZoom { 0% { transform: translateY(50px) scale(4); filter: blur(6px); opacity: 0; } 15% { transform: translateY(-30px) scale(1); filter: blur(0px); opacity: 1; } 30% { transform: translateY(-30px) scale(1); } 45%, 60% { transform: translateY(-230px) scale(0.9); } 80%, 100% { transform: translateY(0) scale(1); } }
-
+        @keyframes reverseLetterSlideZoom { 0% { transform: translateY(50px) scale(4); opacity: 0; } 15% { transform: translateY(-30px) scale(1); opacity: 1; } 30% { transform: translateY(-30px) scale(1); } 45%, 60% { transform: translateY(-230px) scale(0.9); } 80%, 100% { transform: translateY(0) scale(1); } }
+        
         /* ==========================================================================
            SURAT TRI-FOLD DENGAN BLURRED GAZEBO BACKGROUND (FROSTED GLASS EFFECT)
            ========================================================================== */
@@ -268,8 +276,10 @@
 
         .env-letter::before, .letter-top::before, .letter-bottom::before {
             content: ''; position: absolute; inset: -15px; z-index: -1; 
-            background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('images/bg-gazebo.webp');
-            background-size: 300px 500px; filter: blur(6px); clip-path: inset(15px round 5px); 
+            /* Tukar nama fail ke gambar pre-blurred */
+            background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('images/bg-gazebo-blurred.webp');
+            background-size: 300px 500px; clip-path: inset(15px round 5px); 
+            /* PADAM BARIS filter: blur(6px); SEPENUHNYA */
         }
 
         .env-letter::before { background-position: center -100px; }
@@ -343,7 +353,12 @@
         }
 
         /* Pastikan elemen dalam story ada di atas gazebo */
-        .story-section { padding: 40px 20px; text-align: center; position: relative; z-index: 2; }
+        .story-section { 
+            padding: 40px 20px; text-align: center; position: relative; z-index: 2; 
+            /* Tambah 2 baris ini */
+            content-visibility: auto; 
+            contain-intrinsic-size: 500px; 
+        }
         .story-title { font-size: 2.2rem; color: #8B5A2B; font-family: 'Playfair Display', serif; font-style: italic; margin-bottom: 15px; font-weight: 600; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
         .story-text { color: #555; line-height: 1.8; font-size: 0.95rem; margin-bottom: 15px; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
         .bride-groom-name { font-size: 3.5rem; color: #4A3B32; margin: 5px 0; font-family: 'Great Vibes', cursive; text-shadow: 0 2px 4px rgba(255,255,255,0.8); line-height: 1.2; }
@@ -552,7 +567,7 @@
             <div class="drop-wrapper">
                 <div class="float-wrapper">
                     <div class="envelope-wrapper" :class="{ 'is-opening': animState === 'opening', 'is-closing': animState === 'closing' }">
-                        
+                        <div class="env-shadow"></div>
                         <div class="env-back"></div>
                         
                         <div class="env-letter">
@@ -809,14 +824,34 @@
 
                     <form x-show="rsvpStatus" @submit.prevent="submitRSVP()" style="display: none;">
                         <p style="text-align: center; margin-bottom: 15px; font-size: 0.9rem;">Status: <strong style="color:#D4AF37;" x-text="rsvpStatus"></strong></p>
-                        <input type="text" x-model="form.name" class="input-field" placeholder="Nama Penuh" required>
-                        <input type="tel" x-model="form.phone" class="input-field" placeholder="No. Telefon" required>
-                        <div x-show="rsvpStatus === 'Hadir'" class="pax-group">
-                            <div><label class="form-label">Dewasa</label><input type="number" x-model="form.adults" class="input-field" min="1" placeholder="0"></div>
-                            <div><label class="form-label">Kanak-kanak</label><input type="number" x-model="form.children" class="input-field" min="0" placeholder="0"></div>
+                        
+                        <label class="form-label">Nama Anda (Wakil)</label>
+                        <input type="text" x-model="form.name" class="input-field" placeholder="Cth: Akmal" required>
+
+                        <label class="form-label">No. Telefon</label>
+                        <input type="tel" x-model="form.phone" class="input-field" 
+                            pattern="^01[0-9]{7,10}$" 
+                            placeholder="01XXXXXXXX" 
+                            title="Sila masukkan 10 hingga 11 digit nombor telefon yang sah bermula dengan 01" required>
+
+                        <div x-show="rsvpStatus === 'Hadir'">
+                            <label class="form-label">Nama Pasangan / Ahli Keluarga Dibawa (Jika Ada)</label>
+                            <input type="text" x-model="form.partnerName" class="input-field" 
+                                placeholder="Cth: Isteri & Nenek" 
+                                :required="rsvpStatus === 'Hadir' && parseInt(form.adults) > 1">
+                            
+                            <div class="pax-group">
+                                <div><label class="form-label">Jumlah Dewasa</label><input type="number" x-model="form.adults" class="input-field" min="1" placeholder="1" required></div>
+                                <div><label class="form-label">Jumlah Kanak-kanak</label><input type="number" x-model="form.children" class="input-field" min="0" placeholder="0"></div>
+                            </div>
                         </div>
-                        <input type="text" x-model="form.message" class="input-field" placeholder="Ucapan (Pilihan)">
-                        <button type="submit" class="btn-gold" :disabled="isSubmitting" style="margin-bottom: 10px;"><span x-text="isSubmitting ? 'Menghantar...' : 'Hantar RSVP'"></span></button>
+
+                        <label class="form-label">Ucapan Buat Pengantin (Pilihan)</label>
+                        <textarea x-model="form.message" class="input-field" placeholder="Titipkan ucapan anda di sini..." rows="2" style="resize: none;"></textarea>
+                        
+                        <button type="submit" class="btn-gold" :disabled="isSubmitting" style="margin-bottom: 10px;">
+                            <span x-text="isSubmitting ? 'Menghantar...' : 'Hantar RSVP'"></span>
+                        </button>
                         <button type="button" class="btn-text" style="text-shadow: none; margin-top: 5px;" @click="rsvpStatus = null">Kembali</button>
                     </form>
                 </div>
@@ -952,7 +987,7 @@
             if (!container) return; 
             
             const pastelColors = ['#A1C9F1', '#FFF5BA', '#A8E6CF', '#D7BCE8', '#FFD1DC'];
-            const petalCount = 75; 
+            const petalCount = 50; 
 
             for (let i = 0; i < petalCount; i++) {
                 let petal = document.createElement('div');
@@ -1015,7 +1050,18 @@
                 rsvpStatus: null,
                 isSubmitting: false,
                 submitSuccess: false,
-                form: { name: '', phone: '', adults: '', children: '', message: '' },
+                form: { name: '', phone: '', partnerName: '', adults: '1', children: '0', message: '' },
+
+                setHadir() {
+                    this.rsvpStatus = 'Hadir';
+                    this.form.adults = '1';
+                },
+                
+                setTidakHadir() {
+                    this.rsvpStatus = 'Tidak Hadir';
+                    this.form.adults = '0';
+                    this.form.children = '0';
+                },
 
                 openKad() { 
                     if (this.animState !== 'idle') return; 
@@ -1082,12 +1128,32 @@
                 },
 
                 submitRSVP() {
+                    // 1. Semakan: Pastikan sekurang-kurangnya 1 dewasa kalau hadir
+                    if (this.rsvpStatus === 'Hadir' && parseInt(this.form.adults) < 1) {
+                        alert("Sila masukkan sekurang-kurangnya 1 orang dewasa.");
+                        return;
+                    }
+
+                    // 2. Semakan: Wajib isi nama kalau bawa orang (Dewasa > 1)
+                    if (this.rsvpStatus === 'Hadir' && parseInt(this.form.adults) > 1 && !this.form.partnerName.trim()) {
+                        alert("Sila isi nama pasangan atau ahli keluarga yang dibawa, memandangkan jumlah dewasa lebih dari 1.");
+                        return;
+                    }
+
                     this.isSubmitting = true;
-                    const newName = this.form.name;
+                    
+                    // GABUNGKAN NAMA UNTUK UCAPAN (Contoh: "Faiz & Isteri & Nenek")
+                    let displayName = this.form.name;
+                    if (this.rsvpStatus === 'Hadir' && this.form.partnerName.trim() !== '') {
+                        displayName = `${this.form.name} & ${this.form.partnerName}`;
+                    }
+
                     const newMessage = this.form.message;
                     
                     const payload = {
-                        name: this.form.name, phone: this.form.phone, attendance: this.rsvpStatus,
+                        name: displayName, 
+                        phone: this.form.phone, 
+                        attendance: this.rsvpStatus,
                         adults: this.rsvpStatus === 'Hadir' ? this.form.adults : '0',
                         children: this.rsvpStatus === 'Hadir' ? this.form.children : '0',
                         message: this.form.message
@@ -1102,11 +1168,13 @@
                         this.isSubmitting = false;
                         this.submitSuccess = true;
                         
+                        // Masukkan nama tergabung ke senarai ucapan di depan skrin
                         if (newMessage && newMessage.trim() !== '') {
-                            this.messages.unshift({ name: newName, message: newMessage });
+                            this.messages.unshift({ name: displayName, message: newMessage });
                         }
                         
-                        this.form = { name: '', phone: '', adults: '', children: '', message: '' }; 
+                        // Reset form kepada asal
+                        this.form = { name: '', phone: '', partnerName: '', adults: '1', children: '0', message: '' }; 
                     })
                     .catch(error => {
                         alert("Ralat semasa menghantar. Sila cuba lagi.");
