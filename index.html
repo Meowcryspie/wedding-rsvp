@@ -309,11 +309,19 @@
         /* 1. CONTAINER: Latar belakang putih bersih untuk bahagian bawah (RSVP/Scratch) */
         .story-container { 
             height: 100%; padding-bottom: 120px; 
-            background-color: #FAF8F5; /* Putih bersih */
+            background-color: #FAF8F5; 
+            
+            /* MAGIK CORAK GEOMETRI ISLAMIK (Bintang / Star Lattice) */
+            /* TYPO DIBETULKAN: fill-opacity='0.12' */
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 15L15 30l15 15 15-15L30 15zm0 4.24l10.76 10.76-10.76 10.76-10.76-10.76L30 19.24zM15 0L0 15l15 15L30 15 15 0zm0 4.24L25.76 15 15 25.76 4.24 15 15 4.24zM45 0L30 15l15 15L60 15 45 0zm0 4.24L55.76 15 45 25.76 34.24 15 45 4.24zM15 60l15-15-15-15L0 45l15 15zm0-4.24L25.76 45 15 34.24 4.24 45 15 55.76zM45 60l15-15-15-15-15 15 15 15zm0-4.24L55.76 45 45 34.24 34.24 45 45 55.76z' fill='%23D4AF37' fill-opacity='0.5' fill-rule='evenodd'/%3E%3C/svg%3E");
+            
+            background-size: 50px 50px; 
+            background-attachment: fixed; 
+            
             scroll-behavior: smooth; overflow-y: auto; position: relative; 
             z-index: 100; opacity: 0; transform: scale(0.95); 
             transition: opacity 1s ease, transform 1s ease; pointer-events: none; 
-            padding-bottom: 0 !important; /* Paksa buang ruang putih di bawah */
+            padding-bottom: 0 !important; 
         }
         .story-container.is-revealed { opacity: 1; transform: scale(1); pointer-events: auto; }
 
@@ -322,7 +330,7 @@
             position: absolute; 
             top: 0; left: 0; right: 0;
             height: 85vh; /* Berhenti di kawasan bintang */
-            z-index: 0; 
+            z-index: 2; 
             pointer-events: none;
             
             background-image: url('images/bg-gazebo.webp');
@@ -442,6 +450,19 @@
         }
 
         /* ==========================================================================
+           MAGIK SCROLL REVEAL (FADE UP)
+           ========================================================================== */
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(50px); /* Mula dari 40px di bawah */
+            transition: opacity 1.5s cubic-bezier(0.5, 0, 0, 1), transform 1.5s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0); /* Meluncur naik ke tempat asal */
+        } 
+        /* ==========================================================================
            7. FLOATING UI ELEMENTS (Audio, Close Button, Nav Bar)
            ========================================================================== */
         
@@ -507,8 +528,6 @@
         .cal-date { color: #555; padding: 6px 0; border-radius: 50%; transition: all 0.3s; }
         .cal-date.active { background: #D4AF37; color: white; font-weight: bold; box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4); transform: scale(1.1); }
 
-        
-        /* Latar Belakang Gelap (Pudar Lembut / Soft Ombre Blend) */
         .section-darker {
             /* Magik pudar (fade): Putih (0%) -> Mula Gelap (15%) -> Gelap Penuh (Tengah) -> Mula Putih (85%) -> Putih Penuh (100%) */
             background: linear-gradient(to bottom, 
@@ -518,20 +537,51 @@
                 #FAF8F5 100%
             );
             margin: 0;
-            padding-top: 10px; /* Tambah ruang bernafas */
+            padding-top: 10px; 
             padding-bottom: 10px;
             border: none;
+            position: relative;
+            
+            /* MAGIK SEBENAR DI SINI: Pecahkan dinding kebal story-section */
+            z-index: auto !important; 
+            content-visibility: visible !important; 
         }
 
+        .section-darker > * {
+            position: relative;
+            z-index: 2 !important; /* Paksa teks dan masjid duduk DEPAN bunga (z-index 1) */
+        }
+        /* Latar Belakang Gelap (Pudar Lembut / Soft Ombre Blend) */
+        .story-container { 
+            height: 100%; padding-bottom: 120px; 
+            background-color: #FAF8F5; 
+            
+            /* MAGIK CORAK CSS (Lukisan garisan menyerong nipis) */
+            background-image: repeating-linear-gradient(
+                45deg, 
+                rgba(212, 175, 55, 0.04) 0, 
+                rgba(212, 175, 55, 0.04) 1px, 
+                transparent 1px, 
+                transparent 25px
+            );
+            
+            background-attachment: fixed; 
+            scroll-behavior: smooth; overflow-y: auto; position: relative; 
+            z-index: 100; opacity: 0; transform: scale(0.95); 
+            transition: opacity 1s ease, transform 1s ease; pointer-events: none; 
+            padding-bottom: 0 !important; 
+        }
         /* =============== SEKSYEN PENUTUP & KREDIT (FIXED) =============== */
-        /* 2. FOOTER PREMIUM (Susunan Saiz Baru & Bintang Pengantara) */
-        /* =============== SEKSYEN PENUTUP & KREDIT =============== */
+        
+        /* =============== SEKSYEN PENUTUP & KREDIT (FIXED) =============== */
         .section-footer {
-            /* Potong warna putih ke warna dark gold ngam-ngam pada 12px (tengah-tengah bintang) */
-            background: linear-gradient(to bottom, #FAF8F5 0%, #FAF8F5 13px, #A38A6A 13px, #A38A6A 100%);
+            /* MAGIK DI SINI: Tukar #FAF8F5 kepada transparent! */
+            background: linear-gradient(to bottom, transparent 0%, transparent 13px, #A38A6A 13px, #A38A6A 100%);
             padding: 0 20px 90px; 
             text-align: center;
             border: none;
+            position: relative; 
+            z-index: 10; /* Kekal 10 supaya bintang duduk depan bunga */
         }
 
         /* Kelas baru khas untuk 5 bintang emas */
@@ -539,7 +589,7 @@
             color: #D4AF37; /* Warna Gold */
             font-size: 1.2rem;
             letter-spacing: 6px;
-            margin: 0 auto 25px;
+            margin: 0 auto 5px;
             line-height: 24px; /* Ketinggian 24px, dipotong pada 12px (separuh) */
             text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
@@ -549,7 +599,7 @@
             justify-content: center;
             align-items: center;
             gap: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 5px;
         }
 
         .footer-name {
@@ -582,6 +632,43 @@
             letter-spacing: 1px;
             margin-top: 3px;
             color: rgba(250, 248, 245, 0.6);
+        }
+        /* ==========================================================
+           BUNGA GAM KAT SKRIN (STICKY FRAME)
+           ========================================================== */
+        .sticky-bunga-container {
+            position: sticky;
+            top: 0; 
+            height: 100vh; 
+            width: 100%;
+            margin-bottom: -100vh; 
+            z-index: 1; /* MAGIK 2: Duduk letak belakang gazebo (z-index 0) */
+            pointer-events: none; 
+        }
+
+        .bunga-skrin {
+            position: absolute;
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.85; 
+        }
+
+        .bunga-atas {
+            top: 0; /* MAGIK 3: Rapatkan terus ke siling (buang 2vh) */
+            right: 0;
+            width: 180px; 
+            height: 180px;
+            background-image: url('images/bunga-atas.png');
+            background-position: top right;
+        }
+
+        .bunga-bawah {
+            bottom: 70px; /* MAGIK: Angkat 75px supaya duduk ngam-ngam atas nav bar */
+            left: 0;
+            width: 220px; 
+            height: 220px;
+            background-image: url('images/bunga-bawah.png');
+            background-position: bottom left;
         }
     </style>
 </head>
@@ -649,7 +736,10 @@
         <div class="story-container" :class="introFinished ? 'is-revealed' : ''" x-ref="storyScroll">
             
             <div class="gazebo-header-bg"></div>
-
+            <div class="sticky-bunga-container" x-show="isScratched" x-transition.opacity.duration.1500ms>
+                <div class="bunga-skrin bunga-atas"></div>
+                <div class="bunga-skrin bunga-bawah"></div>
+            </div>
             <div class="story-section" style="min-height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                 
                 <div class="vellum-card">
@@ -680,12 +770,12 @@
             </div>
 
             <div class="story-section" style="padding-top: 20px; display: flex; flex-direction: column; justify-content: center;">
-                <h2 class="story-title" style="font-size: 3rem; margin-bottom: 5px;">Reveal</h2>
-                <div x-show="!isScratched" style="color: #8B5A2B; font-weight: bold; font-size: 0.9rem; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">
+                <h2 class="story-title reveal-on-scroll" style="font-size: 3rem; margin-bottom: 5px;">Reveal</h2>
+                <div x-show="!isScratched" class="reveal-on-scroll" style="color: #8B5A2B; font-weight: bold; font-size: 0.9rem; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">
                     Sapu kotak di bawah untuk melihat tarikh! <i class="ph ph-hand-swipe-down"></i>
                 </div>
 
-                <div class="scratch-wrapper">
+                <div class="scratch-wrapper reveal-on-scroll">
                     <div class="scratch-reveal-content">
                         <h3>26 Jun 2026</h3>
                         <p style="color: #555; font-size: 0.9rem;">Jumaat (Selepas Asar)</p>
@@ -704,36 +794,36 @@
             <div x-show="isScratched" style="display: none;" x-transition.opacity.duration.1000ms>
                 
                 <div class="story-section" x-data="countdownTimer()" x-init="start()" style="padding-bottom: 0;">
-                    <h2 class="story-title">Menanti Hari</h2>
-                    <p style="font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: #8B5A2B; margin-bottom: 20px; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">Dua Hati, Satu Janji</p>
-                    <div class="countdown-wrapper">
+                    <h2 class="story-title reveal-on-scroll">Menanti Hari</h2>
+                    <p class="reveal-on-scroll" style="font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: #8B5A2B; margin-bottom: 20px; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">Dua Hati, Satu Janji</p>
+                    <div class="countdown-wrapper reveal-on-scroll">
                         <div class="cd-box"><span class="cd-num" x-text="days">00</span><span class="cd-label">Hari</span></div>
                         <div class="cd-box"><span class="cd-num" x-text="hours">00</span><span class="cd-label">Jam</span></div>
                         <div class="cd-box"><span class="cd-num" x-text="minutes">00</span><span class="cd-label">Minit</span></div>
                         <div class="cd-box"><span class="cd-num" x-text="seconds">00</span><span class="cd-label">Saat</span></div>
                     </div>
-                    <p style="font-size: 0.9rem; color: #8B5A2B; margin-top: 15px; margin-bottom: 25px; font-style: italic;">menjelang hari bahagia</p>
+                    <p class="reveal-on-scroll" style="font-size: 0.9rem; color: #8B5A2B; margin-top: 15px; margin-bottom: 25px; font-style: italic;">menjelang hari bahagia</p>
                 </div>
 
                 <div class="story-section section-darker">
                     
                     <div class="divider" style="margin-top: 0; margin-bottom: 25px;">✦ ✧ ✦</div>
 
-                    <p style="font-size: 0.85rem; letter-spacing: 1px; color: #888; text-transform: uppercase;">Majlis akan berlangsung di</p>
+                    <p class="reveal-on-scroll" style="font-size: 0.85rem; letter-spacing: 1px; color: #888; text-transform: uppercase;">Majlis akan berlangsung di</p>
                     
-                    <img src="images/masjid.webp" style="width: 100%; max-width: 350px; margin: 10px auto 20px; display: block; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.06));" alt="Lukisan Masjid Al-Abyad">                    
-                    <h2 class="story-title" style="margin-top: 10px; font-size: 2.5rem;">Masjid Al-Abyad</h2>
-                    <p class="story-text" style="font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px;">Taman Matang Jaya, Kuching</p>
-                    <p class="story-text" style="font-size: 0.9rem; font-weight: bold; color: #D4AF37;">26 Jun 2026</p>
+                    <img src="images/masjid.webp" class="reveal-on-scroll" style="width: 100%; max-width: 350px; margin: 10px auto 20px; display: block; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.06));" alt="Lukisan Masjid Al-Abyad">                    
+                    <h2 class="story-title reveal-on-scroll" style="margin-top: 10px; font-size: 2.5rem;">Masjid Al-Abyad</h2>
+                    <p class="story-text reveal-on-scroll" style="font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px;">Taman Matang Jaya, Kuching</p>
+                    <p class="story-text reveal-on-scroll" style="font-size: 0.9rem; font-weight: bold; color: #D4AF37;">26 Jun 2026</p>
                     
                     <div class="divider" style="margin-top: 25px; margin-bottom: 0;">✦ ✧ ✦</div>
 
                 </div>
                 
                 <div class="story-section">
-                    <h2 class="story-title">Aturcara Majlis</h2>
-                    <p style="font-size: 0.85rem; color: #888; margin-bottom: 15px; font-style: italic; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">Sila datang menepati waktu.</p>
-                    <div class="aturcara-box">
+                    <h2 class="story-title reveal-on-scroll">Aturcara Majlis</h2>
+                    <p class="reveal-on-scroll" style="font-size: 0.85rem; color: #888; margin-bottom: 15px; font-style: italic; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">Sila datang menepati waktu.</p>
+                    <div class="aturcara-box reveal-on-scroll">
                         <div class="aturcara-item">
                             <span class="aturcara-event">Ketibaan Tetamu & Ahli Keluarga</span>
                             <span class="aturcara-time">4:00 Petang</span>
@@ -758,29 +848,29 @@
                     
                     <div class="divider" style="margin-top: 0; margin-bottom: 25px;">✦ ✧ ✦</div>
 
-                    <h2 class="story-title">Tema Pakaian</h2>
+                    <h2 class="story-title reveal-on-scroll">Tema Pakaian</h2>
                     
-                    <img src="images/dresscode.webp" style="width: 100%; max-width: 250px; margin: 10px auto 20px; display: block; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.06));" alt="Tema Pakaian Pastel">
+                    <img src="images/dresscode.webp" class="reveal-on-scroll" style="width: 100%; max-width: 250px; margin: 10px auto 20px; display: block; filter: drop-shadow(0 15px 15px rgba(0,0,0,0.06));" alt="Tema Pakaian Pastel">
                     
-                    <p class="story-text" style="font-size: 0.9rem; line-height: 1.6;">Kami menjemput anda untuk berpakaian elegan dan formal untuk meraikan hari istimewa ini bersama kami.</p>
+                    <p class="story-text reveal-on-scroll" style="font-size: 0.9rem; line-height: 1.6;">Kami menjemput anda untuk berpakaian elegan dan formal untuk meraikan hari istimewa ini bersama kami.</p>
                     
-                    <p style="font-size: 1.5rem; color: #8B5A2B; font-family: 'Playfair Display', serif; margin: 20px 0 5px;">Pakaian Bersesuaian Beretika di Masjid</p>
-                    <p style="font-size: 1.1rem; color: #4A3B32; font-family: 'Lora', serif; font-style: italic;">Sila elakkan memakai warna putih</p>
-                    <p style="font-size: 0.9rem; color: #888; margin-top: 5px;">Warna tema pastel digalakkan</p>
+                    <p class="reveal-on-scroll" style="font-size: 1.5rem; color: #8B5A2B; font-family: 'Playfair Display', serif; margin: 20px 0 5px;">Pakaian Bersesuaian Beretika di Masjid</p>
+                    <p class="reveal-on-scroll" style="font-size: 1.1rem; color: #4A3B32; font-family: 'Lora', serif; font-style: italic;">Sila elakkan memakai warna putih</p>
+                    <p class="reveal-on-scroll" style="font-size: 0.9rem; color: #888; margin-top: 5px;">Warna tema pastel digalakkan</p>
                     
                     <div class="divider" style="margin-top: 25px; margin-bottom: 0;">✦ ✧ ✦</div>
 
                 </div>
 
                 <div class="story-section" x-init="fetchMessages()">
-                    <h2 class="story-title" style="margin-bottom: 5px;">Ucapan Tetamu</h2>
-                    <p style="font-size: 0.85rem; color: #888; margin-bottom: 20px; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">Doa dan titipan kata dari anda</p>
+                    <h2 class="story-title reveal-on-scroll" style="margin-bottom: 5px;">Ucapan Tetamu</h2>
+                    <p class="reveal-on-scroll" style="font-size: 0.85rem; color: #888; margin-bottom: 20px; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">Doa dan titipan kata dari anda</p>
                     
-                    <div x-show="isLoadingMessages" style="color: #D4AF37; font-size: 0.9rem; margin: 20px 0; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">
+                    <div x-show="isLoadingMessages" class="reveal-on-scroll" style="color: #D4AF37; font-size: 0.9rem; margin: 20px 0; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">
                         <i class="ph ph-spinner ph-spin" style="font-size: 1.5rem; vertical-align: middle;"></i> Memuat turun ucapan...
                     </div>
 
-                    <div x-show="!isLoadingMessages" style="max-height: 300px; overflow-y: auto; text-align: left; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.85); backdrop-filter: blur(5px); border: 1px solid #eaeaea; display: none; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);">
+                    <div x-show="!isLoadingMessages" class="reveal-on-scroll" style="max-height: 300px; overflow-y: auto; text-align: left; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.85); backdrop-filter: blur(5px); border: 1px solid #eaeaea; display: none; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);">
                         <div x-show="messages.length === 0" style="text-align: center; color: #888; font-size: 0.9rem; padding: 20px 0;">
                             Belum ada ucapan. Jadilah yang pertama!
                         </div>
@@ -791,15 +881,17 @@
                             </div>
                         </template>
                     </div>
-                    
+                    <button class="btn-outline reveal-on-scroll" style="margin-top: 15px;" @click="activeSheet = 'ucapanForm'">
+                        <i class="ph ph-pencil-simple"></i> Tinggalkan Ucapan
+                    </button>
                 </div>
 
                 <div class="story-section section-darker" style="padding-bottom: 20px;">
                     <div class="divider" style="margin-top: 0; margin-bottom: 25px;">✦ ✧ ✦</div>
 
-                    <h2 class="story-title" style="margin-bottom: 25px;">Doa & Harapan</h2>
+                    <h2 class="story-title reveal-on-scroll" style="margin-bottom: 25px;">Doa & Harapan</h2>
                     
-                    <div class="doa-box">
+                    <div class="doa-box reveal-on-scroll">
                         <p class="story-text" style="font-style: italic; line-height: 1.8; margin: 0; color: #666;">
                             "Semoga mahligai yang dibina sentiasa dilimpahi kebahagiaan, ketenangan, dan mekar dengan kasih sayang yang berpanjangan. Mohon titipkan doa yang baik-baik buat kami berdua."
                         </p>
@@ -855,45 +947,47 @@
                 </div>
 
                 <div x-show="!submitSuccess">
-                    <div x-show="!rsvpStatus">
-                        <p style="text-align: center; color: #666; margin-bottom: 10px;">Sila sahkan kehadiran anda ke majlis kami.</p>
-                        <div class="btn-flex-row">
-                            <button type="button" class="btn-outline" style="background: #fff;" @click="rsvpStatus = 'Hadir'">Hadir</button>
-                            <button type="button" class="btn-outline" style="background: #fff;" @click="rsvpStatus = 'Tidak Hadir'">Tidak Hadir</button>
-                        </div>
-                    </div>
-
-                    <form x-show="rsvpStatus" @submit.prevent="submitRSVP()" style="display: none;">
-                        <p style="text-align: center; margin-bottom: 15px; font-size: 0.9rem;">Status: <strong style="color:#D4AF37;" x-text="rsvpStatus"></strong></p>
+                    
+                    <form x-init="if(rsvpStatus === null) setHadir()" @submit.prevent="submitRSVP()">
                         
-                        <label class="form-label">Nama Anda (Wakil)</label>
-                        <input type="text" x-model="form.name" class="input-field" placeholder="Cth: Akmal" required>
+                        <label class="form-label">Nama Anda</label>
+                        <input type="text" x-model="form.name" class="input-field" placeholder="Nama Penuh" required>
 
-                        <label class="form-label">No. Telefon</label>
-                        <input type="tel" x-model="form.phone" class="input-field" 
-                            pattern="^01[0-9]{7,10}$" 
-                            placeholder="01XXXXXXXX" 
-                            title="Sila masukkan 10 hingga 11 digit nombor telefon yang sah bermula dengan 01" required>
+                        <label class="form-label" style="text-align: center; font-weight: bold; margin-top: 15px; display: block;">Adakah anda akan hadir?</label>
+                        <div class="btn-flex-row" style="margin-top: 5px; margin-bottom: 15px;">
+                            <button type="button" class="btn-outline" 
+                                :style="rsvpStatus === 'Hadir' ? 'background: #D4AF37; color: white; border-color: #D4AF37;' : 'background: #fff;'" 
+                                @click="setHadir()">Ya, Hadir</button>
+                            
+                            <button type="button" class="btn-outline" 
+                                :style="rsvpStatus === 'Tidak Hadir' ? 'background: #D4AF37; color: white; border-color: #D4AF37;' : 'background: #fff;'" 
+                                @click="setTidakHadir()">Tidak Hadir</button>
+                        </div>
 
                         <div x-show="rsvpStatus === 'Hadir'">
                             <label class="form-label">Nama Pasangan / Ahli Keluarga Dibawa (Jika Ada)</label>
                             <input type="text" x-model="form.partnerName" class="input-field" 
-                                placeholder="Cth: Isteri & Nenek" 
+                                placeholder="Cth: Pasangan / Ahli Keluarga" 
                                 :required="rsvpStatus === 'Hadir' && parseInt(form.adults) > 1">
                             
-                            <div class="pax-group">
-                                <div><label class="form-label">Jumlah Dewasa</label><input type="number" x-model="form.adults" class="input-field" min="1" placeholder="1" required></div>
-                                <div><label class="form-label">Jumlah Kanak-kanak</label><input type="number" x-model="form.children" class="input-field" min="0" placeholder="0"></div>
-                            </div>
+                            <label class="form-label">Jumlah Kehadiran</label>
+                            <select x-model="form.adults" class="input-field" :required="rsvpStatus === 'Hadir'" style="cursor: pointer; appearance: auto;">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                            </select>
                         </div>
 
                         <label class="form-label">Ucapan Buat Pengantin (Pilihan)</label>
                         <textarea x-model="form.message" class="input-field" placeholder="Titipkan ucapan anda di sini..." rows="2" style="resize: none;"></textarea>
                         
-                        <button type="submit" class="btn-gold" :disabled="isSubmitting" style="margin-bottom: 10px;">
+                        <button type="submit" class="btn-gold" :disabled="isSubmitting" style="margin-bottom: 10px; margin-top: 10px;">
                             <span x-text="isSubmitting ? 'Menghantar...' : 'Hantar RSVP'"></span>
                         </button>
-                        <button type="button" class="btn-text" style="text-shadow: none; margin-top: 5px;" @click="rsvpStatus = null">Kembali</button>
                     </form>
                 </div>
             </div>
@@ -934,6 +1028,13 @@
             
             <div class="sheet-content">
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #eaeaea; border-radius: 15px; margin-bottom: 15px;">
+                    <div><h4 style="color: #333; font-family: 'Playfair Display', serif;">Izzatul Intan</h4><p style="color: #888; font-size: 0.8rem;">Kakak Pengantin Lelaki</p></div>
+                    <div style="display: flex; gap: 10px;">
+                        <a href="tel:+60128949096" style="background: #f4f0ec; color: #D4AF37; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-phone"></i></a>
+                        <a href="https://wa.me/60128949096" target="_blank" style="background: #25D366; color: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-whatsapp-logo"></i></a>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #eaeaea; border-radius: 15px; margin-bottom: 15px;">
                     <div><h4 style="color: #333; font-family: 'Playfair Display', serif;">Faizatul Fitri</h4><p style="color: #888; font-size: 0.8rem;">Pengantin Lelaki</p></div>
                     <div style="display: flex; gap: 10px;">
                         <a href="tel:+60128720170" style="background: #f4f0ec; color: #D4AF37; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none;"><i class="ph ph-phone"></i></a>
@@ -964,6 +1065,37 @@
                 <div class="btn-flex-row">
                     <a href="https://maps.app.goo.gl/D9oXZfg166U2ehAWA" target="_blank" class="btn-outline" style="background:#fff; text-decoration: none;"><i class="ph ph-google-logo" style="margin-right: 5px;"></i> Google Maps</a>
                     <a href="https://ul.waze.com/ul?place=ChIJkbsL09oH-zER-h3j5DT06HQ&ll=1.58037330%2C110.29830990&navigate=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location" target="_blank" class="btn-outline" style="background:#fff; text-decoration: none;"><i class="ph ph-navigation-arrow" style="margin-right: 5px;"></i> Waze</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-sheet" :class="activeSheet === 'ucapanForm' ? 'is-active' : ''">
+            <div class="sheet-header-wrapper">
+                <button class="btn-close-sheet" @click="activeSheet = null"><i class="ph ph-x"></i></button>
+                <div class="sheet-header">Titipan Doa</div>
+            </div>
+            
+            <div class="sheet-content">
+                <div x-show="submitUcapanSuccess" class="success-state" style="display: none;">
+                    <i class="ph ph-check-circle"></i>
+                    <h3 style="margin-bottom: 10px; font-family: 'Playfair Display', serif;">Terima Kasih!</h3>
+                    <p style="color: #666; margin-bottom: 20px;">Ucapan anda telah direkodkan.</p>
+                    <button class="btn-gold" @click="activeSheet = null">Tutup</button>
+                </div>
+
+                <div x-show="!submitUcapanSuccess">
+                    <p style="text-align: center; color: #666; font-size: 0.85rem; margin-bottom: 15px;">Sudi kiranya anda menitipkan doa dan harapan buat bakal pengantin.</p>
+                    <form @submit.prevent="submitHanyaUcapan()">
+                        <label class="form-label">Nama Anda</label>
+                        <input type="text" x-model="formUcapan.name" class="input-field" placeholder="Dari siapa?" required>
+
+                        <label class="form-label">Ucapan & Doa</label>
+                        <textarea x-model="formUcapan.message" class="input-field" placeholder="Tuliskan ucapan anda di sini..." rows="4" style="resize: none;" required></textarea>
+                        
+                        <button type="submit" class="btn-gold" :disabled="isSubmittingUcapan" style="margin-bottom: 10px;">
+                            <span x-text="isSubmittingUcapan ? 'Menghantar...' : 'Hantar Ucapan'"></span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -1093,6 +1225,11 @@
                 submitSuccess: false,
                 form: { name: '', phone: '', partnerName: '', adults: '1', children: '0', message: '' },
 
+                // State khas untuk form ucapan
+                isSubmittingUcapan: false,
+                submitUcapanSuccess: false,
+                formUcapan: { name: '', message: '' },
+
                 setHadir() {
                     this.rsvpStatus = 'Hadir';
                     this.form.adults = '1';
@@ -1169,21 +1306,21 @@
                 },
 
                 submitRSVP() {
-                    // 1. Semakan: Pastikan sekurang-kurangnya 1 dewasa kalau hadir
+                    // 1. Semakan: Pastikan sekurang-kurangnya 1 kehadiran kalau hadir
                     if (this.rsvpStatus === 'Hadir' && parseInt(this.form.adults) < 1) {
-                        alert("Sila masukkan sekurang-kurangnya 1 orang dewasa.");
+                        alert("Sila masukkan sekurang-kurangnya 1 untuk jumlah kehadiran.");
                         return;
                     }
 
-                    // 2. Semakan: Wajib isi nama kalau bawa orang (Dewasa > 1)
+                    // 2. Semakan: Wajib isi nama kalau bawa orang (Kehadiran > 1)
                     if (this.rsvpStatus === 'Hadir' && parseInt(this.form.adults) > 1 && !this.form.partnerName.trim()) {
-                        alert("Sila isi nama pasangan atau ahli keluarga yang dibawa, memandangkan jumlah dewasa lebih dari 1.");
+                        alert("Sila isi nama pasangan atau ahli keluarga yang dibawa, memandangkan jumlah kehadiran lebih dari 1.");
                         return;
                     }
 
                     this.isSubmitting = true;
                     
-                    // GABUNGKAN NAMA UNTUK UCAPAN (Contoh: "Faiz & Isteri & Nenek")
+                    // GABUNGKAN NAMA UNTUK UCAPAN 
                     let displayName = this.form.name;
                     if (this.rsvpStatus === 'Hadir' && this.form.partnerName.trim() !== '') {
                         displayName = `${this.form.name} & ${this.form.partnerName}`;
@@ -1191,12 +1328,13 @@
 
                     const newMessage = this.form.message;
                     
+                    // PAYLOAD BARU (Sesuai dengan form yang dah diringkaskan)
                     const payload = {
                         name: displayName, 
-                        phone: this.form.phone, 
+                        phone: '-', // Kita letak '-' supaya kolom sheet kau tak lari
                         attendance: this.rsvpStatus,
-                        adults: this.rsvpStatus === 'Hadir' ? this.form.adults : '0',
-                        children: this.rsvpStatus === 'Hadir' ? this.form.children : '0',
+                        adults: this.rsvpStatus === 'Hadir' ? this.form.adults : '0', // Ini sekarang mewakili Total Kehadiran
+                        children: '0', // Kita paksa jadi 0 sebab dah takde kolom kanak-kanak
                         message: this.form.message
                     };
 
@@ -1221,6 +1359,29 @@
                         alert("Ralat semasa menghantar. Sila cuba lagi.");
                         this.isSubmitting = false;
                     });
+                },
+
+                // --- FUNGSI BARU KHAS UNTUK HANTAR UCAPAN SAHAJA ---
+                submitHanyaUcapan() {
+                    this.isSubmittingUcapan = true;
+                    
+                    const payload = {
+                        name: this.formUcapan.name, 
+                        phone: '-', 
+                        attendance: 'Hanya Ucapan', // Label khas masuk Google Sheet
+                        adults: '0', children: '0',
+                        message: this.formUcapan.message
+                    };
+
+                    const googleUrl = 'https://script.google.com/macros/s/AKfycbzDZttIC0pf3bBlPvlCtAEwmVP9Kwnvu9-4scxF2CbDyIkeovxXsY-_GIytcruMBq5Pyg/exec';
+
+                    fetch(googleUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+                    .then(() => {
+                        this.isSubmittingUcapan = false; this.submitUcapanSuccess = true;
+                        this.messages.unshift({ name: this.formUcapan.name, message: this.formUcapan.message });
+                        this.formUcapan = { name: '', message: '' }; 
+                    })
+                    .catch(() => { alert("Ralat semasa menghantar. Sila cuba lagi."); this.isSubmittingUcapan = false; });
                 }
             }
         }
@@ -1285,6 +1446,36 @@
             canvas.addEventListener('touchmove', scratch, { passive: false });
             canvas.addEventListener('touchend', () => { isDrawing = false; });
         }
+        // ==========================================
+        // FUNCTION 5: SCROLL REVEAL ANIMATION
+        // ==========================================
+        function initScrollReveal() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15 // Apabila 15% kotak masuk skrin, animasi bermula
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target); // Animasi berlaku sekali sahaja
+                    }
+                });
+            }, observerOptions);
+
+            // Cari semua elemen yang ada kelas 'reveal-on-scroll' dan pantau
+            const revealElements = document.querySelectorAll('.reveal-on-scroll');
+            revealElements.forEach((el) => {
+                observer.observe(el);
+            });
+        }
+
+        // Jalankan fungsi ni lepas page siap load
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(initScrollReveal, 1000); 
+        });
     </script>
 </body>
 </html>
