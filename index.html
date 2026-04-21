@@ -951,7 +951,7 @@
                     <form x-init="if(rsvpStatus === null) setHadir()" @submit.prevent="submitRSVP()">
                         
                         <label class="form-label">Nama Anda</label>
-                        <input type="text" x-model="form.name" class="input-field" placeholder="Nama Penuh" required>
+                        <input type="text" x-model="form.name" class="input-field" placeholder="Nama" required>
 
                         <label class="form-label" style="text-align: center; font-weight: bold; margin-top: 15px; display: block;">Adakah anda akan hadir?</label>
                         <div class="btn-flex-row" style="margin-top: 5px; margin-bottom: 15px;">
@@ -967,7 +967,7 @@
                         <div x-show="rsvpStatus === 'Hadir'">
                             <label class="form-label">Nama Pasangan / Ahli Keluarga Dibawa (Jika Ada)</label>
                             <input type="text" x-model="form.partnerName" class="input-field" 
-                                placeholder="Cth: Pasangan / Ahli Keluarga" 
+                                placeholder="Cth: Aqil, Li ying, Hamka" 
                                 :required="rsvpStatus === 'Hadir' && parseInt(form.adults) > 1">
                             
                             <label class="form-label">Jumlah Kehadiran</label>
