@@ -162,8 +162,11 @@
         @keyframes dropIn { 0% { transform: translateY(-100vh); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
         
-        .drop-wrapper { animation: dropIn 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-        .float-wrapper { animation: float 3.5s ease-in-out infinite; animation-delay: 1.2s; perspective: 1000px; }
+        /* MAGIK: Tambah 0.8s delay supaya tunggu preloader hilang, dan guna 'both' supaya dia tak muncul awal */
+        .drop-wrapper { animation: dropIn 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.8s both; }
+        
+        /* MAGIK: Sesuaikan masa terapung supaya mula lepas sampul siap jatuh (0.8s + 1.2s = 2s) */
+        .float-wrapper { animation: float 3.5s ease-in-out infinite; animation-delay: 2s; perspective: 1000px; }
 
         /* ==========================================================================
            3. STRUKTUR SAMPUL BARU & SEAL TRANSPARENT
